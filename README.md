@@ -1,12 +1,14 @@
 # The Complete Guide to Advanced React Component Patterns
 
 ## Table of Contents
+
 - [The Complete Guide to Advanced React Component Patterns](#the-complete-guide-to-advanced-react-component-patterns)
   - [Table of Contents](#table-of-contents)
   - [**Section 1: Introduction**](#section-1-introduction)
   - [**Section 2: The Medium Clap: Real-world Component for Studying Advanced React Patterns**](#section-2-the-medium-clap-real-world-component-for-studying-advanced-react-patterns)
     - [Why build the medium clap?](#why-build-the-medium-clap)
     - [Building and styling the medium clap](#building-and-styling-the-medium-clap)
+    - [Handling user interactivity](#handling-user-interactivity)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -21,9 +23,11 @@
 ## **Section 1: Introduction**
 
 Design Patterns
+
 - Time-tested solution to recurring design problems
- 
+
 Why Advanced React Patterns
+
 - Solve issues related to building **reusable components** using proven solutions
 - Development of highly cohesive components with **minimal coupling**
 - Better ways to **share logic** between components
@@ -47,9 +51,9 @@ Building and styling the medium clap
 
 ```javascript
 <button>
-  <ClapIcon/>
-  <ClapCount/>
-  <CountTotal/>
+  <ClapIcon />
+  <ClapCount />
+  <CountTotal />
 </button>
 ```
 
@@ -64,29 +68,55 @@ Building and styling the medium clap
 ```javascript
 const MediumClap = () => (
   <button>
-    <ClapIcon/>
-    <ClapCount/>
-    <CountTotal/>
+    <ClapIcon />
+    <ClapCount />
+    <CountTotal />
   </button>
 )
 
-const ClapIcon = () => (
+const ClapIcon = ({ isClicked }) => (
   <span>
-  {/* SVG */}
+    <svg> ... </svg>
   </span>
 )
+const ClapCount = ({ count }) => <span>+ {count}</span>
+const CountTotal = ({ countTotal }) => <span>{countTotal}</span>
+```
 
-const ClapCount = ({ count }) => (
-  <span>
-    + {count}
-  </span>
-)
+**[⬆ back to top](#table-of-contents)**
 
-const CountTotal = ({ countTotal }) => (
+### Handling user interactivity
+
+```javascript
+const initialState = {
+  count: 0,
+  countTotal: 267,
+  isClicked: false
+}
+
+const MediumClap = () => {
+  const MAXIMUM_USER_CLAP = 50
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal, isClicked } = clapState
+
+  const handleClapClick = () => { ... }
+  return (
+    <button onClick={handleClapClick} >
+      <ClapIcon isClicked={isClicked}/>
+      <ClapCount count={count} />
+      <CountTotal countTotal={countTotal} />
+    </button>
+  )
+}
+
+const ClapIcon = ({ isClicked }) => (
   <span>
-    {countTotal}
+    <svg className={`${isClicked && styles.checked}`>
+    </svg>
   </span>
 )
+const ClapCount = ({ count }) => <span>+ {count}</span>
+const CountTotal = ({ countTotal }) => <span>{countTotal}</span>
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -130,3 +160,4 @@ const CountTotal = ({ countTotal }) => (
 ## **Section 12: (Bonus) Classifying the Patterns: How to choose the best API**
 
 **[⬆ back to top](#table-of-contents)**
+```
