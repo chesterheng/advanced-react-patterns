@@ -17,7 +17,7 @@
     - [Animating the clap count](#animating-the-clap-count)
     - [Creating animated bursts!](#creating-animated-bursts)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
-    - [Introduction to Custom Hooks](#introduction-to-custom-hooks)
+    - [Building an animation custom hook](#building-an-animation-custom-hook)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
@@ -360,7 +360,10 @@ const withClapAnimation = WrappedComponent => {
 
     componentDidMount() {
       const tlDuration = 300
-      ... 
+      const scaleButton = new mojs.Html({ ... })
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+      
       const countTotalAnimation = new mojs.Html({
         el: "#clapCountTotal",
         delay: (3 * tlDuration) / 2,
@@ -418,7 +421,11 @@ const withClapAnimation = WrappedComponent => {
 
     componentDidMount() {
       const tlDuration = 300
-      ... 
+      const scaleButton = new mojs.Html({ ... })
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+      const countTotalAnimation = new mojs.Html({ ... })
+
       const countAnimation = new mojs.Html({
         el: "#clapCount",
         duration: tlDuration,
@@ -484,7 +491,12 @@ const withClapAnimation = WrappedComponent => {
 
     componentDidMount() {
       const tlDuration = 300
-      ...
+      const scaleButton = new mojs.Html({ ... })
+      const countTotalAnimation = new mojs.Html({ ... })
+      const countAnimation = new mojs.Html({ ... })
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+
       // particle effect burst
       const triangleBurst = new mojs.Burst({
         parent: "#clap",
@@ -548,9 +560,85 @@ const withClapAnimation = WrappedComponent => {
 
 ## **Section 3: Custom Hooks: The first Foundational Pattern**
 
-### Introduction to Custom Hooks
+### Building an animation custom hook
 
 [Building Your Own Hooks](https://reactjs.org/docs/hooks-custom.html#using-a-custom-hook)
+- MediumClap (Logic) -> invoke hook -> useClapAnimation (Animation)
+- MediumClap (Logic) <- returns a value <- useClapAnimation (Animation)
+
+```javascript
+import React, { useState, useEffect } from 'react'
+import mojs from 'mo-js'
+import styles from './index.css'
+
+const initialState = {
+  count: 0,
+  countTotal: 267,
+  isClicked: false
+}
+
+// Custom Hook for animaton
+const useClapAnimation = () => {
+
+  // Do not write useState(new mojs.Timeline())
+  // if not every single time useClapAnimation is called
+  // new mojs.Timeline() is involved
+  const [animationTimeline, setAnimationTimeline] = useState(() => new mojs.Timeline())
+  
+  useEffect(() => {
+    const tlDuration = 300
+    const scaleButton = new mojs.Html({ ... })
+    const countTotalAnimation = new mojs.Html({ ... })
+    const countAnimation = new mojs.Html({ ... })
+    const clap = document.getElementById('clap')
+    clap.style.transform = 'scale(1,1)'
+    const triangleBurst = new mojs.Burst({ ... })
+    const circleBurst = new mojs.Burst({ ... })
+    const newAnimationTimeline = animationTimeline.add(
+      [
+        scaleButton, 
+        countTotalAnimation,
+        countAnimation,
+        triangleBurst,
+        circleBurst
+      ])
+    setAnimationTimeline(newAnimationTimeline)
+  }, [])
+
+  return animationTimeline;
+}
+
+const MediumClap = () => {
+  const MAXIMUM_USER_CLAP = 50
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal, isClicked } = clapState
+  
+  const animationTimeline = useClapAnimation()
+
+  const handleClapClick = () => {
+    animationTimeline.replay()
+    setClapState(prevState => ({ ... }))
+  }
+
+  return (
+    <button 
+      id="clap"
+      className={styles.clap} 
+      onClick={handleClapClick}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount count={count} />
+      <CountTotal countTotal={countTotal} />
+    </button>
+  )
+}
+
+const ClapIcon = ({ isClicked }) => ( ... )
+const ClapCount = ({ count }) => ( ... )
+const CountTotal = ({ countTotal }) => ( ... )
+
+export default MediumClap
+```
 
 **[⬆ back to top](#table-of-contents)**
 
