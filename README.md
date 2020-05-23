@@ -21,7 +21,7 @@
     - [Custom hooks and refs](#custom-hooks-and-refs)
     - [When is my hook invoked?](#when-is-my-hook-invoked)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
-    - [Compound components in plain approachable language](#compound-components-in-plain-approachable-language)
+    - [Why compound components?](#why-compound-components)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
@@ -563,7 +563,7 @@ const withClapAnimation = WrappedComponent => {
 
 ## **Section 3: Custom Hooks: The first Foundational Pattern**
 
-Custom Hooks are a mechanism to reuse stateful logic.
+Custom Hooks are a mechanism to reuse stateful logic
 
 ```javascript
 // name must start with "use"!
@@ -584,7 +584,7 @@ Open-source examples
 | Single Responsibility Modules | Bring your own UI | 
 | Reduced complexity            |                   | 
 
-**Pros**
+Pros
 - Single Responsibility Modules
   - As seen in react-use, custom hooks are a simple way to share single responsibility modules within React apps.
 - Reduced complexity
@@ -920,9 +920,67 @@ export default MediumClap
 
 ## **Section 4: The Compound Components Pattern**
 
-### Compound components in plain approachable language
+The pattern refers to an interesting way to communicate the relationship between UI components and share implicit state by leveraging an explicit parent-child relationship
 
+Parent Component: MediumClap
+- Child Component: Icon
+- Child Component: Total
+- Child Component: Count
 
+```javascript
+// The parent component handles the UI state values and updates. State values are communicated from parent to child
+// Typically with the Context API
+<MediumClap>
+  <MediumClap.Icon />
+  <MediumClap.Total />
+  <MediumClap.Count />
+</MediumClap>
+
+// Adding the child components to the instance of the Parent component is completely optional. The following is equally valid
+<MediumClap>
+  <ClapIcon />
+  <ClapCountTotal />
+  <ClapCount />
+</MediumClap>
+```
+
+Open-source examples
+- [Reach UI](https://reacttraining.com/reach-ui/)
+
+| Pros                      | Cons | 
+|:--------------------------|:-----|
+| Flexible Markup Structure |      | 
+| Reduced complexity        |      | 
+| Separation of Concerns    |      |
+
+Pros
+- Flexible Markup Structure
+  - Users can rearrange the child components in whatever way they seem fit. e.g. having an accordion header at the bottom as opposed to the top.
+- Reduced Complexity
+  - As opposed to jamming all props in one giant parent component and drilling those down to child UI components, child props go to their respective child components.
+- Separation of Concerns
+  - Having all UI state logic in the Parent component and communicating that internally to all child components makes for a clear division of responsibility.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Why compound components?
+
+- Customizability: can change child component props
+- Understandable API: user can see all child components
+- Props Overload
+```javascript
+<MediumClap 
+  clapProps={}
+  countTotalProps={}
+  clapIconProps={}
+/>
+
+<MediumClap>
+  <ClapIcon />
+  <ClapCountTotal />
+  <ClapCount />
+</MediumClap>
+```
 
 **[⬆ back to top](#table-of-contents)**
 
