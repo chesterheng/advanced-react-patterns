@@ -24,6 +24,7 @@
     - [Why compound components?](#why-compound-components)
     - [How to implement the pattern](#how-to-implement-the-pattern)
     - [Refactor to Compound components](#refactor-to-compound-components)
+    - [Alternative export strategy](#alternative-export-strategy)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
@@ -1167,6 +1168,33 @@ const Usage = () => {
 }
 
 export default Usage
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Alternative export strategy
+
+```javascript
+const MediumClap = ({ children }) => { ... }
+MediumClap.Icon = ClapIcon
+MediumClap.Count = ClapCount
+MediumClap.Total = ClapCountTotal
+
+export default MediumClap
+```
+
+```javascript
+import MediumClap, { Icon, Count, Total } from 'medium-clap'
+
+const Usage = () => {
+  return (
+    <MediumClap>
+      <Icon />
+      <Count />
+      <Total />
+    </MediumClap>
+  )
+}
 ```
 
 **[⬆ back to top](#table-of-contents)**

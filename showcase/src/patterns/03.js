@@ -231,14 +231,19 @@ const ClapCountTotal = () => {
   )
 }
 
+MediumClap.Icon = ClapIcon
+MediumClap.Count = ClapCount
+MediumClap.Total = ClapCountTotal
+// import MediumClap, { Icon, Count, Total } from 'medium-clap'
+
 // 5. MediumClap component don’t know their children ahead of time. 
 // Use the special children prop to pass children elements directly into MediumClap
 const Usage = () => {
   return (
     <MediumClap>
-      <ClapIcon />
-      <ClapCount />
-      <ClapCountTotal />
+      <MediumClap.Icon />
+      <MediumClap.Count />
+      <MediumClap.Total />
     </MediumClap>
   )
 }
