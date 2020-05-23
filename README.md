@@ -22,6 +22,7 @@
     - [When is my hook invoked?](#when-is-my-hook-invoked)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
     - [Why compound components?](#why-compound-components)
+    - [How to implement the pattern](#how-to-implement-the-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
@@ -975,6 +976,23 @@ Pros
   clapIconProps={}
 />
 
+<MediumClap>
+  <ClapIcon />
+  <ClapCountTotal />
+  <ClapCount />
+</MediumClap>
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### How to implement the pattern
+
+Parent Component: MediumClap - create context object
+- Child Component: ClapIcon - access context object
+- Child Component: ClapCountTotal - access context object
+- Child Component: ClapCount - access context object
+
+```javascript
 <MediumClap>
   <ClapIcon />
   <ClapCountTotal />
