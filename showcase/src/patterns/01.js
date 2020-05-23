@@ -19,10 +19,16 @@ const withClapAnimation = WrappedComponent => {
       const scaleButton = new mojs.Html({
         el: "#clap",
         duration: 300,
-        scale: { 1.3: 1 },
+        // scale from [t=0, 1.3] to [t=300, 1]
+        scale: { 1.3 : 1 },
         easing: mojs.easing.ease.out
       })
 
+      // scale back to 1 before animation start
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+
+      // update timeline with scaleButton animation
       const newAnimationTimeline = 
         this.animationTimeline.add([scaleButton])
       this.setState({ animationTimeline: newAnimationTimeline})

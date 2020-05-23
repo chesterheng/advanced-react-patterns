@@ -12,6 +12,7 @@
     - [Higher order components recap](#higher-order-components-recap)
     - [Beginning to animate the clap](#beginning-to-animate-the-clap)
     - [Creating and updating the animation timeline](#creating-and-updating-the-animation-timeline)
+    - [Resolving wrong animated scale](#resolving-wrong-animated-scale)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -250,7 +251,7 @@ const withClapAnimation = WrappedComponent => {
       const scaleButton = new mojs.Html({
         el: "#clap",
         duration: 300,
-        scale: { 1.3: 1 },
+        scale: { 1.3 : 1 },
         easing: mojs.easing.ease.out
       })
       const newAnimationTimeline = 
@@ -284,6 +285,49 @@ const MediumClap = ({ animationTimeline }) => {
       <CountTotal countTotal={countTotal} />
     </button>
   )
+}
+
+export default withClapAnimation(MediumClap)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Resolving wrong animated scale
+
+```javascript
+import mojs from 'mo-js'
+
+const withClapAnimation = WrappedComponent => {
+  class WithClapAnimation extends Component {
+    animationTimeline = new mojs.Timeline()
+    state = {
+      animationTimeline: this.animationTimeline
+    }
+
+    componentDidMount() {
+      const scaleButton = new mojs.Html({
+        el: "#clap",
+        duration: 300,
+        scale: { 1.3 : 1 },
+        easing: mojs.easing.ease.out
+      })
+
+      // scale back to 1 before animation start
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+
+      const newAnimationTimeline = 
+        this.animationTimeline.add([scaleButton])
+      this.setState({ animationTimeline: newAnimationTimeline})
+    }
+
+    render() {
+      return <WrappedComponent 
+        {...this.props} 
+        animationTimeline={this.state.animationTimeline />
+    }
+  }
+  return WithClapAnimation
 }
 
 export default withClapAnimation(MediumClap)
