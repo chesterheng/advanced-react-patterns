@@ -6,6 +6,7 @@
   - [**Section 1: Introduction**](#section-1-introduction)
   - [**Section 2: The Medium Clap: Real-world Component for Studying Advanced React Patterns**](#section-2-the-medium-clap-real-world-component-for-studying-advanced-react-patterns)
     - [Why build the medium clap?](#why-build-the-medium-clap)
+    - [Building and styling the medium clap](#building-and-styling-the-medium-clap)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -41,17 +42,51 @@ Building and styling the medium clap
 3. The Clap Total count Show
 
 ![The default State of the Component - unclicked](01-default-state.jpg)
-
 ![The Clap Count & Burst Shown](02-clap-count.jpg)
-
 ![The Clap Total count Show](03-clap-total.jpg)
 
 ```javascript
 <button>
-  <ClapIcon />
-  <ClapCount />
-  <CountTotal />
+  <ClapIcon/>
+  <ClapCount/>
+  <CountTotal/>
 </button>
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Building and styling the medium clap
+
+- [Free Icons for Everything - Noun Project](https://thenounproject.com/)
+- [SVGOMG - SVGO's Missing GUI](https://jakearchibald.github.io/svgomg/)
+- [World's Best SVG Compressor](https://vecta.io/nano)
+
+```javascript
+const MediumClap = () => (
+  <button>
+    <ClapIcon/>
+    <ClapCount/>
+    <CountTotal/>
+  </button>
+)
+
+const ClapIcon = () => (
+  <span>
+  {/* SVG */}
+  </span>
+)
+
+const ClapCount = ({ count }) => (
+  <span>
+    + {count}
+  </span>
+)
+
+const CountTotal = ({ countTotal }) => (
+  <span>
+    {countTotal}
+  </span>
+)
 ```
 
 **[⬆ back to top](#table-of-contents)**
