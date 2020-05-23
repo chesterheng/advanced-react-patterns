@@ -11,6 +11,7 @@
     - [Handling user interactivity](#handling-user-interactivity)
     - [Higher order components recap](#higher-order-components-recap)
     - [Beginning to animate the clap](#beginning-to-animate-the-clap)
+    - [Creating and updating the animation timeline](#creating-and-updating-the-animation-timeline)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -173,9 +174,8 @@ export default withClapAnimation(MediumClap)
 
 ### Beginning to animate the clap
 
-[JavaScript Motion Graphics Library](https://mojs.github.io/)
-(https://reactjs.org/docs/higher-order-components.html)
- 
+- [JavaScript Motion Graphics Library](https://mojs.github.io/)
+
 Animation Timeline
 | Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
 |:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
@@ -211,6 +211,71 @@ const MediumClap = ({ animationTimeline }) => {
 
   return (
     <button 
+      className={styles.clap} 
+      onClick={handleClapClick}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount count={count} />
+      <CountTotal countTotal={countTotal} />
+    </button>
+  )
+}
+
+export default withClapAnimation(MediumClap)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Creating and updating the animation timeline
+
+- [CSS Animation Timing Function](https://www.w3schools.com/cssref/css3_pr_animation-timing-function.asp)
+- [mo.js Base Easing Functions](https://mojs.github.io/api/easing/base-functions.html)
+ 
+Animation Timeline
+| Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
+|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+| scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
+
+```javascript
+import mojs from 'mo-js'
+
+const withClapAnimation = WrappedComponent => {
+  class WithClapAnimation extends Component {
+    animationTimeline = new mojs.Timeline()
+    state = {
+      animationTimeline: this.animationTimeline
+    }
+
+    componentDidMount() {
+      const scaleButton = new mojs.Html({
+        el: "#clap",
+        duration: 300,
+        scale: { 1.3: 1 },
+        easing: mojs.easing.ease.out
+      })
+      const newAnimationTimeline = 
+        this.animationTimeline.add([scaleButton])
+      this.setState({ animationTimeline: newAnimationTimeline})
+    }
+
+    render() {
+      return <WrappedComponent 
+        {...this.props} 
+        animationTimeline={this.state.animationTimeline />
+    }
+  }
+  return WithClapAnimation
+}
+
+const MediumClap = ({ animationTimeline }) => {
+  const handleClapClick = () => {
+    animationTimeline.replay()
+    setClapState(prevState => ({ ... }))
+  }
+
+  return (
+    <button 
+      id="clap"
       className={styles.clap} 
       onClick={handleClapClick}
     >
