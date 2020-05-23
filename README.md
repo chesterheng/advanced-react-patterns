@@ -9,6 +9,7 @@
     - [Why build the medium clap?](#why-build-the-medium-clap)
     - [Building and styling the medium clap](#building-and-styling-the-medium-clap)
     - [Handling user interactivity](#handling-user-interactivity)
+    - [Higher order components recap](#higher-order-components-recap)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -99,7 +100,10 @@ const MediumClap = () => {
   const [clapState, setClapState] = useState(initialState)
   const { count, countTotal, isClicked } = clapState
 
-  const handleClapClick = () => { ... }
+  const handleClapClick = () => {
+    animate()
+    setClapState(prevState => ({ ... }))
+  }
   return (
     <button onClick={handleClapClick} >
       <ClapIcon isClicked={isClicked}/>
@@ -117,6 +121,51 @@ const ClapIcon = ({ isClicked }) => (
 )
 const ClapCount = ({ count }) => <span>+ {count}</span>
 const CountTotal = ({ countTotal }) => <span>{countTotal}</span>
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Higher order components recap
+
+[console.log timestamps in Chrome](https://stackoverflow.com/questions/12008120/console-log-timestamps-in-chrome)
+- Console: (...) -> Settings -> Preferences -> Console -> [x] Show timestamps
+
+[Higher-Order Components](https://reactjs.org/docs/higher-order-components.html)
+- Component -> HOC -> Component*
+- Component(Logic) -> HOC -> Component*(Animation +Logic)
+
+```javascript
+const withClapAnimation = WrappedComponent => {
+  class WithClapAnimation extends Component {
+    animate = () => {
+      console.log('%c Animate', 'background:yellow; color:black')
+    }
+    render() {
+      return <WrappedComponent {...this.props} animate={this.animate}/>
+    }
+  }
+  return WithClapAnimation
+}
+
+const MediumClap = ({ animate }) => {
+  const handleClapClick = () => {
+    animate()
+    setClapState(prevState => ({ ... }))
+  }
+
+  return (
+    <button 
+      className={styles.clap} 
+      onClick={handleClapClick}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount count={count} />
+      <CountTotal countTotal={countTotal} />
+    </button>
+  )
+}
+
+export default withClapAnimation(MediumClap)
 ```
 
 **[⬆ back to top](#table-of-contents)**

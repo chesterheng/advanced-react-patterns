@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
 import styles from './index.css'
 
 const initialState = {
@@ -7,11 +7,24 @@ const initialState = {
   isClicked: false
 }
 
-const MediumClap = () => {
+const withClapAnimation = WrappedComponent => {
+  class WithClapAnimation extends Component {
+    animate = () => {
+      console.log('%c Animate', 'background:yellow; color:black')
+    }
+    render() {
+      return <WrappedComponent {...this.props} animate={this.animate}/>
+    }
+  }
+  return WithClapAnimation
+}
+
+const MediumClap = ({ animate }) => {
   const MAXIMUM_USER_CLAP = 50
   const [clapState, setClapState] = useState(initialState)
   const { count, countTotal, isClicked } = clapState
   const handleClapClick = () => {
+    animate()
     setClapState(prevState => ({
       count: Math.min(prevState.count + 1, MAXIMUM_USER_CLAP),
       countTotal: 
@@ -59,5 +72,4 @@ const CountTotal = ({ countTotal }) => (
   </span>
 )
 
-
-export default MediumClap
+export default withClapAnimation(MediumClap)
