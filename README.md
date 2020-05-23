@@ -17,6 +17,7 @@
     - [Animating the clap count](#animating-the-clap-count)
     - [Creating animated bursts!](#creating-animated-bursts)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
+    - [Introduction to Custom Hooks](#introduction-to-custom-hooks)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
@@ -546,6 +547,10 @@ const withClapAnimation = WrappedComponent => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 3: Custom Hooks: The first Foundational Pattern**
+
+### Introduction to Custom Hooks
+
+[Building Your Own Hooks](https://reactjs.org/docs/hooks-custom.html#using-a-custom-hook)
 
 **[⬆ back to top](#table-of-contents)**
 
