@@ -19,7 +19,9 @@
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
     - [Building an animation custom hook](#building-an-animation-custom-hook)
     - [Custom hooks and refs](#custom-hooks-and-refs)
+    - [When is my hook invoked?](#when-is-my-hook-invoked)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
+    - [Compound components in plain approachable language](#compound-components-in-plain-approachable-language)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
@@ -184,7 +186,7 @@ export default withClapAnimation(MediumClap)
 
 Animation Timeline
 | Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
-|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+|:--------------------|:----------------|:--------:|:------------------:|:------------------:|:----------------------:|
 | scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
 | triangleBurst       | #clap           | radius   | 0                  | 50 (t=delay)       | 95 (t=duration)        |
 | circleBurst         | #clap           | radius   | 0                  | 50 (t=delay)       | 75 (t=duration)        |
@@ -239,7 +241,7 @@ export default withClapAnimation(MediumClap)
  
 Animation Timeline
 | Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
-|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+|:--------------------|:----------------|:--------:|:------------------:|:------------------:|:----------------------:|
 | scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
 
 ```javascript
@@ -345,7 +347,7 @@ export default withClapAnimation(MediumClap)
 
 Animation Timeline
 | Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
-|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+|:--------------------|:----------------|:--------:|:------------------:|:------------------:|:----------------------:|
 | scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
 | countTotalAnimation | #clapCountTotal | opacity  | (3 * duration) / 2 | 0 (t=delay)        | 1 (t=duration)         |
 
@@ -404,7 +406,7 @@ export default withClapAnimation(MediumClap)
 
 Animation Timeline
 | Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
-|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+|:--------------------|:----------------|:--------:|:------------------:|:------------------:|:----------------------:|
 | scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
 | countAnimation      | #clapCount      | opacity  | 0                  | 0 (t=delay)        | 1 (t=duration)         |
 | countAnimation      | #clapCount      | opacity  | duration / 2       | 1 (t=duration)     | 0 (t=duration + delay) |
@@ -474,7 +476,7 @@ export default withClapAnimation(MediumClap)
 
 Animation Timeline
 | Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
-|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+|:--------------------|:----------------|:--------:|:------------------:|:------------------:|:----------------------:|
 | scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
 | triangleBurst       | #clap           | radius   | 0                  | 50 (t=delay)       | 95 (t=duration)        |
 | circleBurst         | #clap           | radius   | 0                  | 50 (t=delay)       | 75 (t=duration)        |
@@ -560,6 +562,39 @@ const withClapAnimation = WrappedComponent => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 3: Custom Hooks: The first Foundational Pattern**
+
+Custom Hooks are a mechanism to reuse stateful logic.
+
+```javascript
+// name must start with "use"!
+const useAdvancedPatterns = () => {
+  // state and effects isolated here
+}
+
+// Must be called from a React fn component/other custom hook
+useAdvancedPatterns()
+```
+
+Open-source examples
+- [react-use](https://github.com/streamich/react-use)
+- [React Table](https://github.com/tannerlinsley/react-table)
+
+| Pros                          | Cons              | 
+|:------------------------------|:------------------|
+| Single Responsibility Modules | Bring your own UI | 
+| Reduced complexity            |                   | 
+
+**Pros**
+- Single Responsibility Modules
+  - As seen in react-use, custom hooks are a simple way to share single responsibility modules within React apps.
+- Reduced complexity
+  - Custom hooks are a good way to reduce complexity in your component library. Focus on logic and let the user bring their own UI e.g. React Table.
+
+Cons
+- Bring your own UI
+  - Historically, most users expect open-source solutions like React Table to include Table UI elements and props to customize its feel and functionality. Providing only custom hooks may throw off a few users. They may find it harder to compose hooks while providing their own UI.
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Building an animation custom hook
 
@@ -820,7 +855,74 @@ export default MediumClap
 
 **[⬆ back to top](#table-of-contents)**
 
+### When is my hook invoked?
+
+- [useEffect vs useLayoutEffect](https://kentcdodds.com/blog/useeffect-vs-uselayouteffect)
+- [useEffect vs. useLayoutEffect in plain, approachable language](https://blog.logrocket.com/useeffect-vs-uselayouteffect/)
+
+```javascript
+const initialState = { ... }
+
+// Custom Hook for animaton
+const useClapAnimation = ({
+  clapEl, 
+  clapCountEl, 
+  clapCountTotalEl
+}) => {
+
+  // Do not write useState(new mojs.Timeline())
+  // if not every single time useClapAnimation is called
+  // new mojs.Timeline() is involved
+  const [animationTimeline, setAnimationTimeline] = useState(() => new mojs.Timeline())
+  
+  useLayoutEffect(() => {
+    if(!clapEl || !clapCountEl || !clapCountTotalEl) return
+
+    const tlDuration = 300
+    const scaleButton = new mojs.Html({ ... })
+    const countTotalAnimation = new mojs.Html({ ... })
+    const countAnimation = new mojs.Html({ ... })
+
+    // scale back to 1 before animation start
+    if(typeof clapEl === 'string') {
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+    } else {
+      clapEl.style.transform = 'scale(1,1)'
+    }
+
+    // particle effect burst
+    const triangleBurst = new mojs.Burst({ ... })
+    const circleBurst = new mojs.Burst({ ... })
+
+    const newAnimationTimeline = animationTimeline.add(
+      [
+        scaleButton, 
+        countTotalAnimation,
+        countAnimation,
+        triangleBurst,
+        circleBurst
+      ])
+    setAnimationTimeline(newAnimationTimeline)
+  }, [clapEl, clapCountEl, clapCountTotalEl])
+
+  return animationTimeline;
+}
+
+const MediumClap = () => { ... }
+const ClapIcon = ({ isClicked }) => ( ... )
+const ClapCount = ({ count, setRef }) => ( ... )
+const CountTotal = ({ countTotal, setRef }) => ( ... )
+export default MediumClap
+```
+
+**[⬆ back to top](#table-of-contents)**
+
 ## **Section 4: The Compound Components Pattern**
+
+### Compound components in plain approachable language
+
+
 
 **[⬆ back to top](#table-of-contents)**
 

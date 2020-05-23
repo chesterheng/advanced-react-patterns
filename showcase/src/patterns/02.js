@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useLayoutEffect, useCallback } from 'react'
 import mojs from 'mo-js'
 import styles from './index.css'
 
@@ -20,7 +20,8 @@ const useClapAnimation = ({
   // new mojs.Timeline() is involved
   const [animationTimeline, setAnimationTimeline] = useState(() => new mojs.Timeline())
   
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if(!clapEl || !clapCountEl || !clapCountTotalEl) return
     const tlDuration = 300
     const scaleButton = new mojs.Html({
       el: clapEl,
@@ -106,7 +107,7 @@ const useClapAnimation = ({
         circleBurst
       ])
     setAnimationTimeline(newAnimationTimeline)
-  }, [])
+  }, [clapEl, clapCountEl, clapCountTotalEl])
 
   return animationTimeline;
 }
