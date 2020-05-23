@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import mojs from 'mo-js'
 import styles from './index.css'
 
@@ -9,7 +9,11 @@ const initialState = {
 }
 
 // Custom Hook for animaton
-const useClapAnimation = () => {
+const useClapAnimation = ({
+  clapEl, 
+  clapCountEl, 
+  clapCountTotalEl
+}) => {
 
   // Do not write useState(new mojs.Timeline())
   // if not every single time useClapAnimation is called
@@ -19,7 +23,7 @@ const useClapAnimation = () => {
   useEffect(() => {
     const tlDuration = 300
     const scaleButton = new mojs.Html({
-      el: "#clap",
+      el: clapEl,
       duration: tlDuration,
       // scale from [t=0, 1.3] to [t=300, 1]
       scale: { 1.3 : 1 },
@@ -27,7 +31,7 @@ const useClapAnimation = () => {
     })
 
     const countTotalAnimation = new mojs.Html({
-      el: "#clapCountTotal",
+      el: clapCountTotalEl,
       delay: (3 * tlDuration) / 2,
       duration: tlDuration,
       // opacity from [t=delay, 0] to [t=300, 1]
@@ -37,7 +41,7 @@ const useClapAnimation = () => {
     })
 
     const countAnimation = new mojs.Html({
-      el: "#clapCount",
+      el: clapCountEl,
       duration: tlDuration,
       opacity: { 0 : 1 },
       y: { 0 : -30 }
@@ -49,12 +53,16 @@ const useClapAnimation = () => {
     })
 
     // scale back to 1 before animation start
-    const clap = document.getElementById('clap')
-    clap.style.transform = 'scale(1,1)'
+    if(typeof clapEl === 'string') {
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+    } else {
+      clapEl.style.transform = 'scale(1,1)'
+    }
 
     // particle effect burst
     const triangleBurst = new mojs.Burst({
-      parent: "#clap",
+      parent: clapEl,
       // radius from [t=0, 50] to [t=300, 95]
       radius: { 50 : 95 },
       count: 5,
@@ -75,7 +83,7 @@ const useClapAnimation = () => {
     })
 
     const circleBurst = new mojs.Burst({
-      parent: '#clap',
+      parent: clapEl,
       radius: { 50: 75 },
       angle: 25,
       duration: tlDuration,
@@ -108,7 +116,19 @@ const MediumClap = () => {
   const [clapState, setClapState] = useState(initialState)
   const { count, countTotal, isClicked } = clapState
   
-  const animationTimeline = useClapAnimation()
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRefState] = useState({})
+  const setRef = useCallback(node => {
+    setRefState(prevRefState => ({
+      ...prevRefState,
+      [node.dataset.refkey]: node
+    }))
+  }, [])
+
+  const animationTimeline = useClapAnimation({
+    clapEl: clapRef, 
+    clapCountEl: clapCountRef, 
+    clapCountTotalEl: clapCountTotalRef
+  })
 
   const handleClapClick = () => {
     animationTimeline.replay()
@@ -124,13 +144,14 @@ const MediumClap = () => {
 
   return (
     <button 
-      id="clap"
+      ref={setRef} 
+      data-refkey="clapRef"
       className={styles.clap} 
       onClick={handleClapClick}
     >
       <ClapIcon isClicked={isClicked} />
-      <ClapCount count={count} />
-      <CountTotal countTotal={countTotal} />
+      <ClapCount count={count} setRef={setRef} />
+      <CountTotal countTotal={countTotal} setRef={setRef} />
     </button>
   )
 }
@@ -148,14 +169,22 @@ const ClapIcon = ({ isClicked }) => (
   </span>
 )
 
-const ClapCount = ({ count }) => (
-  <span id="clapCount" className={styles.count}>
+const ClapCount = ({ count, setRef }) => (
+  <span 
+    ref={setRef} 
+    data-refkey="clapCountRef" 
+    className={styles.count}
+  >
     + {count}
   </span>
 )
 
-const CountTotal = ({ countTotal }) => (
-  <span id="clapCountTotal" className={styles.total}>
+const CountTotal = ({ countTotal, setRef }) => (
+  <span 
+    ref={setRef} 
+    data-refkey="clapCountTotalRef" 
+    className={styles.total}
+  >
     {countTotal}
   </span>
 )

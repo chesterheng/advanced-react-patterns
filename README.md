@@ -18,6 +18,7 @@
     - [Creating animated bursts!](#creating-animated-bursts)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
     - [Building an animation custom hook](#building-an-animation-custom-hook)
+    - [Custom hooks and refs](#custom-hooks-and-refs)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
@@ -363,7 +364,7 @@ const withClapAnimation = WrappedComponent => {
       const scaleButton = new mojs.Html({ ... })
       const clap = document.getElementById('clap')
       clap.style.transform = 'scale(1,1)'
-      
+
       const countTotalAnimation = new mojs.Html({
         el: "#clapCountTotal",
         delay: (3 * tlDuration) / 2,
@@ -567,10 +568,6 @@ const withClapAnimation = WrappedComponent => {
 - MediumClap (Logic) <- returns a value <- useClapAnimation (Animation)
 
 ```javascript
-import React, { useState, useEffect } from 'react'
-import mojs from 'mo-js'
-import styles from './index.css'
-
 const initialState = {
   count: 0,
   countTotal: 267,
@@ -636,6 +633,187 @@ const MediumClap = () => {
 const ClapIcon = ({ isClicked }) => ( ... )
 const ClapCount = ({ count }) => ( ... )
 const CountTotal = ({ countTotal }) => ( ... )
+
+export default MediumClap
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Custom hooks and refs
+
+- [Refs and the DOM](https://reactjs.org/docs/refs-and-the-dom.html)
+- [ReactJS — useEffect() & useCallback()](https://medium.com/@infinitypaul/reactjs-useeffect-usecallback-simplified-91e69fb0e7a3)
+- [When to useMemo and useCallback](https://kentcdodds.com/blog/usememo-and-usecallback)
+
+```javascript
+const initialState = {
+  count: 0,
+  countTotal: 267,
+  isClicked: false
+}
+
+// Custom Hook for animaton
+const useClapAnimation = ({
+  clapEl, 
+  clapCountEl, 
+  clapCountTotalEl
+}) => {
+
+  // Do not write useState(new mojs.Timeline())
+  // if not every single time useClapAnimation is called
+  // new mojs.Timeline() is involved
+  const [animationTimeline, setAnimationTimeline] = useState(() => new mojs.Timeline())
+  
+  useEffect(() => {
+    const tlDuration = 300
+    const scaleButton = new mojs.Html({
+      el: clapEl,
+      duration: tlDuration,
+      // scale from [t=0, 1.3] to [t=300, 1]
+      scale: { 1.3 : 1 },
+      easing: mojs.easing.ease.out
+    })
+
+    const countTotalAnimation = new mojs.Html({
+      el: clapCountTotalEl,
+      delay: (3 * tlDuration) / 2,
+      duration: tlDuration,
+      // opacity from [t=delay, 0] to [t=300, 1]
+      opacity: { 0 : 1 },
+      // move up y axis from [t=delay, y=0] to [t=300, y=-3]
+      y: { 0 : -3 }
+    })
+
+    const countAnimation = new mojs.Html({
+      el: clapCountEl,
+      duration: tlDuration,
+      opacity: { 0 : 1 },
+      y: { 0 : -30 }
+    }).then({
+      // next animation to fade out
+      delay: tlDuration / 2,
+      opacity: { 1 : 0 },
+      y: -80
+    })
+
+    // scale back to 1 before animation start
+    if(typeof clapEl === 'string') {
+      const clap = document.getElementById('clap')
+      clap.style.transform = 'scale(1,1)'
+    } else {
+      clapEl.style.transform = 'scale(1,1)'
+    }
+
+    // particle effect burst
+    const triangleBurst = new mojs.Burst({
+      parent: clapEl,
+      // radius from [t=0, 50] to [t=300, 95]
+      radius: { 50 : 95 },
+      count: 5,
+      angle: 30,
+      children: {
+        // default is triangle
+        shape: 'polygon',
+        radius: { 6 : 0 },
+        stroke: 'rgba(211,54,0,0.5)',
+        strokeWidth: 2,
+        // angle of each particle
+        angle: 210,
+        speed: 0.2,
+        delay: 30,
+        easing: mojs.easing.bezier(0.1, 1, 0.3, 1),
+        duration: tlDuration,
+      }
+    })
+
+    const circleBurst = new mojs.Burst({
+      parent: clapEl,
+      radius: { 50: 75 },
+      angle: 25,
+      duration: tlDuration,
+      children: {
+        shape: 'circle',
+        fill: 'rgba(149,165,166,0.5)',
+        delay: 30,
+        speed: 0.2,
+        radius: { 3 : 0 },
+        easing: mojs.easing.bezier(0.1, 1, 0.3, 1)
+      }
+    })
+
+    const newAnimationTimeline = animationTimeline.add(
+      [
+        scaleButton, 
+        countTotalAnimation,
+        countAnimation,
+        triangleBurst,
+        circleBurst
+      ])
+    setAnimationTimeline(newAnimationTimeline)
+  }, [])
+
+  return animationTimeline;
+}
+
+const MediumClap = () => {
+  const MAXIMUM_USER_CLAP = 50
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal, isClicked } = clapState
+  
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRefState] = useState({})
+  const setRef = useCallback(node => {
+    setRefState(prevRefState => ({
+      ...prevRefState,
+      [node.dataset.refkey]: node
+    }))
+  }, [])
+
+  const animationTimeline = useClapAnimation({
+    clapEl: clapRef, 
+    clapCountEl: clapCountRef, 
+    clapCountTotalEl: clapCountTotalRef
+  })
+
+  const handleClapClick = () => {
+    animationTimeline.replay()
+    setClapState(prevState => ({ ... }))
+  }
+
+  return (
+    <button 
+      ref={setRef} 
+      data-refkey="clapRef"
+      className={styles.clap} 
+      onClick={handleClapClick}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount count={count} setRef={setRef} />
+      <CountTotal countTotal={countTotal} setRef={setRef} />
+    </button>
+  )
+}
+
+const ClapIcon = ({ isClicked }) => ( ... )
+
+const ClapCount = ({ count, setRef }) => (
+  <span 
+    ref={setRef} 
+    data-refkey="clapCountRef" 
+    className={styles.count}
+  >
+    + {count}
+  </span>
+)
+
+const CountTotal = ({ countTotal, setRef }) => (
+  <span 
+    ref={setRef} 
+    data-refkey="clapCountTotalRef" 
+    className={styles.total}
+  >
+    {countTotal}
+  </span>
+)
 
 export default MediumClap
 ```
