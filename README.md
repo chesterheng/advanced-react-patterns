@@ -15,6 +15,7 @@
     - [Resolving wrong animated scale](#resolving-wrong-animated-scale)
     - [Animating the total count](#animating-the-total-count)
     - [Animating the clap count](#animating-the-clap-count)
+    - [Creating animated bursts!](#creating-animated-bursts)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -454,6 +455,92 @@ const ClapCount = ({ count }) => (
 )
 
 export default withClapAnimation(MediumClap)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Creating animated bursts!
+
+[Bezier Generator](https://cubic-bezier.com/#.17,.67,.83,.67)
+
+Animation Timeline
+| Animation           | Element         | Property | Delay              | Start value (time) | Stop value (time)      |
+|:-------------------:|:---------------:|:--------:|:------------------:|:------------------:|:----------------------:|
+| scaleButton         | #clap           | scale    | 0                  | 1.3 (t=delay)      | 1 (t=duration)         |
+| triangleBurst       | #clap           | radius   | 0                  | 50 (t=delay)       | 95 (t=duration)        |
+| circleBurst         | #clap           | radius   | 0                  | 50 (t=delay)       | 75 (t=duration)        |
+| countAnimation      | #clapCount      | opacity  | 0                  | 0 (t=delay)        | 1 (t=duration)         |
+| countAnimation      | #clapCount      | opacity  | duration / 2       | 1 (t=duration)     | 0 (t=duration + delay) |
+| countTotalAnimation | #clapCountTotal | opacity  | (3 * duration) / 2 | 0 (t=delay)        | 1 (t=duration)         |
+
+```javascript
+const withClapAnimation = WrappedComponent => {
+  class WithClapAnimation extends Component {
+    animationTimeline = new mojs.Timeline()
+    state = { 
+      animationTimeline: this.animationTimeline
+    }
+
+    componentDidMount() {
+      const tlDuration = 300
+      ...
+      // particle effect burst
+      const triangleBurst = new mojs.Burst({
+        parent: "#clap",
+        // radius from [t=0, 50] to [t=300, 95]
+        radius: { 50 : 95 },
+        count: 5,
+        angle: 30,
+        children: {
+          // default is triangle
+          shape: 'polygon',
+          radius: { 6 : 0 },
+          stroke: 'rgba(211,54,0,0.5)',
+          strokeWidth: 2,
+          // angle of each particle
+          angle: 210,
+          speed: 0.2,
+          delay: 30,
+          easing: mojs.easing.bezier(0.1, 1, 0.3, 1),
+          duration: tlDuration,
+        }
+      })
+
+      const circleBurst = new mojs.Burst({
+        parent: '#clap',
+        radius: { 50: 75 },
+        angle: 25,
+        duration: tlDuration,
+        children: {
+          shape: 'circle',
+          fill: 'rgba(149,165,166,0.5)',
+          delay: 30,
+          speed: 0.2,
+          radius: { 3 : 0 },
+          easing: mojs.easing.bezier(0.1, 1, 0.3, 1)
+        }
+      })
+
+      // update timeline with scaleButton animation
+      const newAnimationTimeline = 
+        this.animationTimeline.add([
+          scaleButton, 
+          countTotalAnimation, 
+          countAnimation,
+          triangleBurst,
+          circleBurst
+        ])
+      this.setState({ animationTimeline: newAnimationTimeline})
+    }
+
+    render() {
+      return <WrappedComponent 
+        {...this.props} 
+        animationTimeline={this.state.animationTimeline} />
+    }
+  }
+  return WithClapAnimation
+}
 ```
 
 **[⬆ back to top](#table-of-contents)**
