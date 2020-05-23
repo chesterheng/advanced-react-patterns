@@ -13,6 +13,7 @@
     - [Beginning to animate the clap](#beginning-to-animate-the-clap)
     - [Creating and updating the animation timeline](#creating-and-updating-the-animation-timeline)
     - [Resolving wrong animated scale](#resolving-wrong-animated-scale)
+    - [Animating the total count](#animating-the-total-count)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -305,9 +306,10 @@ const withClapAnimation = WrappedComponent => {
     }
 
     componentDidMount() {
+      const tlDuration = 300
       const scaleButton = new mojs.Html({
         el: "#clap",
-        duration: 300,
+        duration: tlDuration,
         scale: { 1.3 : 1 },
         easing: mojs.easing.ease.out
       })
@@ -317,7 +319,7 @@ const withClapAnimation = WrappedComponent => {
       clap.style.transform = 'scale(1,1)'
 
       const newAnimationTimeline = 
-        this.animationTimeline.add([scaleButton])
+        this.animationTimeline.add([scaleButton, countTotalAnimation])
       this.setState({ animationTimeline: newAnimationTimeline})
     }
 
@@ -329,6 +331,56 @@ const withClapAnimation = WrappedComponent => {
   }
   return WithClapAnimation
 }
+
+export default withClapAnimation(MediumClap)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Animating the total count
+
+```javascript
+import mojs from 'mo-js'
+
+const withClapAnimation = WrappedComponent => {
+  class WithClapAnimation extends Component {
+    animationTimeline = new mojs.Timeline()
+    state = {
+      animationTimeline: this.animationTimeline
+    }
+
+    componentDidMount() {
+      const tlDuration = 300
+      ... 
+      const countTotalAnimation = new mojs.Html({
+        el: "#clapCountTotal",
+        delay: (3 * tlDuration) / 2,
+        duration: tlDuration,
+        // opacity from [t=delay, 0] to [t=300, 1]
+        opacity: { 0 : 1 },
+        // move up y axis from [t=delay, y=0] to [t=300, y=-3]
+        y: { 0 : -3 }
+      })
+
+      const newAnimationTimeline = 
+        this.animationTimeline.add([scaleButton, countTotalAnimation])
+      this.setState({ animationTimeline: newAnimationTimeline})
+    }
+
+    render() {
+      return <WrappedComponent 
+        {...this.props} 
+        animationTimeline={this.state.animationTimeline />
+    }
+  }
+  return WithClapAnimation
+}
+
+const CountTotal = ({ countTotal }) => (
+  <span id="clapCountTotal" className={styles.total}>
+    {countTotal}
+  </span>
+)
 
 export default withClapAnimation(MediumClap)
 ```
