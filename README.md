@@ -5,6 +5,7 @@
   - [Table of Contents](#table-of-contents)
   - [**Section 1: Introduction**](#section-1-introduction)
   - [**Section 2: The Medium Clap: Real-world Component for Studying Advanced React Patterns**](#section-2-the-medium-clap-real-world-component-for-studying-advanced-react-patterns)
+    - [Why build the medium clap?](#why-build-the-medium-clap)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
   - [**Section 4: The Compound Components Pattern**](#section-4-the-compound-components-pattern)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
@@ -29,6 +30,29 @@ Why Advanced React Patterns
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 2: The Medium Clap: Real-world Component for Studying Advanced React Patterns**
+
+### Why build the medium clap?
+
+- [How the demo showcase works](https://advanced-react-patterns-ultrasimplified.netlify.app/)
+
+Building and styling the medium clap
+1. The default State of the Component - unclicked
+2. The Clap Count & Burst Shown
+3. The Clap Total count Show
+
+![The default State of the Component - unclicked](01-default-state.jpg)
+
+![The Clap Count & Burst Shown](02-clap-count.jpg)
+
+![The Clap Total count Show](03-clap-total.jpg)
+
+```javascript
+<button>
+  <ClapIcon />
+  <ClapCount />
+  <CountTotal />
+</button>
+```
 
 **[⬆ back to top](#table-of-contents)**
 
