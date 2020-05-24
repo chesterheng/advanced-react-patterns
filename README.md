@@ -58,6 +58,7 @@
     - [Handling reset side effects](#handling-reset-side-effects)
     - [How usePrevious works](#how-useprevious-works)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
+    - [The state reducer pattern](#the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
 ## **Section 1: Introduction**
@@ -2429,6 +2430,36 @@ const usePrevious = value => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 11: The State Reducer Pattern**
+
+### The state reducer pattern
+
+Like the control props pattern, state reducers allow you to cede state control to the users of your component. Also, by leveraging action types, you minimise code duplicates on the user’s side.
+
+Reducers: update internal state with action
+```javascript
+<MediumClap reducer={reducer} />
+
+(state, action) => {
+  return newState
+}
+```
+
+Open-source examples
+- [downshift](https://github.com/downshift-js/downshift)
+
+| Pros                           | Cons       |
+| :----------------------------- | :--------- |
+| Ultimate Inversion of Control  | Complexity |
+
+Pros
+
+- Ultimate Inversion of Control
+  - State reducers in more complicated use cases are the best way to cede control over to the users of your component/custom hooks.
+
+Cons
+
+- Complexity
+  - The pattern is arguably the most complex of the bunch to implement.
 
 **[⬆ back to top](#table-of-contents)**
 
