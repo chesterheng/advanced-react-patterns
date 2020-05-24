@@ -26,6 +26,7 @@
     - [Refactor to Compound components](#refactor-to-compound-components)
     - [Alternative export strategy](#alternative-export-strategy)
     - [Exposing state via a callback](#exposing-state-via-a-callback)
+    - [Invoking the useEffect callback only after mount!](#invoking-the-useeffect-callback-only-after-mount)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
@@ -1244,6 +1245,28 @@ const Usage = () => {
     </div>
   )
 }
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Invoking the useEffect callback only after mount!
+
+[useRef](https://reactjs.org/docs/hooks-reference.html#useref)
+
+```javascript
+  // 1. default value is false
+  // 1. set to true when MediumClap is rendered
+  const componentJustMounted = useRef(false)
+  useEffect(() => {
+    if(componentJustMounted.current){
+      // 3. next time count changes
+      console.log('onClap is called')
+      onClap && onClap(clapState)
+    } else {
+      // 2. set to true the first time in useEffect after rendered
+      componentJustMounted.current = true
+    }
+  }, [count])
 ```
 
 **[⬆ back to top](#table-of-contents)**

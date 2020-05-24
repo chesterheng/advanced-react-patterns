@@ -5,7 +5,8 @@ import React, {
   createContext,
   useMemo,
   useContext,
-  useEffect
+  useEffect,
+  useRef
 } from 'react'
 import mojs from 'mo-js'
 import styles from './index.css'
@@ -120,15 +121,14 @@ const useClapAnimation = ({
   return animationTimeline;
 }
 
-// 1. MediumClapContext lets us pass a value deep into
-// the tree of React components in MediumClap component
+// MediumClapContext lets us pass a value deep into the tree of React components in MediumClap component
 const MediumClapContext = createContext()
 
-// 2. Use a Provider to pass the current value to the tree below.
+// Use a Provider to pass the current value to the tree below.
 // Any component can read it, no matter how deep it is.
 const { Provider } = MediumClapContext
 
-// 5. MediumClap component don’t know their children ahead of time. 
+// MediumClap component don’t know their children ahead of time. 
 // Use the special children prop to pass children elements directly into MediumClap
 const MediumClap = ({ children, onClap }) => {
   const MAXIMUM_USER_CLAP = 50
@@ -149,8 +149,18 @@ const MediumClap = ({ children, onClap }) => {
     clapCountTotalEl: clapCountTotalRef
   })
 
+  // 1. default value is false
+  // 1. set to true when MediumClap is rendered
+  const componentJustMounted = useRef(false)
   useEffect(() => {
-    onClap && onClap(clapState)
+    if(componentJustMounted.current){
+      // 3. next time count changes
+      console.log('onClap is called')
+      onClap && onClap(clapState)
+    } else {
+      // 2. set to true the first time in useEffect after rendered
+      componentJustMounted.current = true
+    }
   }, [count])
 
   const handleClapClick = () => {
@@ -165,7 +175,7 @@ const MediumClap = ({ children, onClap }) => {
     }))
   }
 
-  // 3. Returns a memoized state.
+  // Returns a memoized state.
   const memoizedValue = useMemo(
     () => ({
       ...clapState, 
@@ -174,9 +184,8 @@ const MediumClap = ({ children, onClap }) => {
   )
 
   return (
-    // 4. Accepts a value prop to be passed to consuming components 
-    // that are descendants of this Provider.
-    // 5. MediumClap component don’t know their children ahead of time. 
+    // Accepts a value prop to be passed to consuming components that are descendants of this Provider.
+    // MediumClap component don’t know their children ahead of time. 
     // Use the special children prop to pass children elements directly into MediumClap
     <Provider value={memoizedValue}>
       <button 
@@ -192,7 +201,7 @@ const MediumClap = ({ children, onClap }) => {
 }
 
 const ClapIcon = () => {
-  // 6. Get prop from MediumClapContext instead from parent MediumClap
+  // Get prop from MediumClapContext instead from parent MediumClap
   const { isClicked } = useContext(MediumClapContext)
   return (
     <span>
@@ -209,7 +218,7 @@ const ClapIcon = () => {
 }
 
 const ClapCount = () => {
-  // 6. Get prop from MediumClapContext instead from parent MediumClap
+  // Get prop from MediumClapContext instead from parent MediumClap
   const { count, setRef } = useContext(MediumClapContext)
   return (
     <span 
@@ -223,7 +232,7 @@ const ClapCount = () => {
 }
 
 const ClapCountTotal = () => {
-  // 6. Get prop from MediumClapContext instead from parent MediumClap
+  // Get prop from MediumClapContext instead from parent MediumClap
   const { countTotal, setRef } = useContext(MediumClapContext)
   return (
     <span 
@@ -241,7 +250,7 @@ MediumClap.Count = ClapCount
 MediumClap.Total = ClapCountTotal
 // import MediumClap, { Icon, Count, Total } from 'medium-clap'
 
-// 5. MediumClap component don’t know their children ahead of time. 
+// MediumClap component don’t know their children ahead of time. 
 // Use the special children prop to pass children elements directly into MediumClap
 const Usage = () => {
   // expose count, countTotal and isClicked
@@ -249,6 +258,9 @@ const Usage = () => {
   const handleClap = (clapState) => {
     setCount(clapState.count)
   }
+    // count = 0
+    // !count = true
+    // !!count = false
   return (
     <div style={{ width: '100%' }}>
       <MediumClap onClap={handleClap}>
@@ -256,7 +268,9 @@ const Usage = () => {
         <MediumClap.Count />
         <MediumClap.Total />
       </MediumClap>
-      <div className={styles.info}>{`You have clapped ${count}`}</div>
+      {!!count && (
+        <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      )}
     </div>
   )
 }
