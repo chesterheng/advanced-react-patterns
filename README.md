@@ -44,6 +44,7 @@
     - [useClapState](#useclapstate)
     - [useEffectAfterMount](#useeffectaftermount)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
+    - [What are props collections?](#what-are-props-collections)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
@@ -1884,6 +1885,34 @@ const useEffectAfterMount = (cb, deps) => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 8: The Props Collection Pattern**
+
+### What are props collections?
+
+Props Collection refer to a collection of common props users of your components/hooks are likely to need.
+- ```<Train seat strap foo/>``` -> ```<Train collection>```
+- ```<Train seat strap foo/>``` -> ```<Train collection>```
+- ```<Train seat strap foo/>``` -> ```<Train collection>```
+- ```<Train seat strap foo/>``` -> ```<Train collection>```
+
+```javascript
+// propsCollection: Typically an object 
+// e.g. { prop1, prop2, prop3 }
+const { propsCollection } = useYourHook()
+```
+
+| Pros         | Cons      |
+| :----------- | :-------- |
+| Ease of Use  | Inflexible |
+
+Pros
+
+- Ease of Use
+  - This pattern exists mostly for the convenience it brings the users of your component/hooks.
+
+Cons
+
+- Inflexible
+  - The collection of props can’t be modified or extended.
 
 **[⬆ back to top](#table-of-contents)**
 
