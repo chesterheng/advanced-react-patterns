@@ -42,6 +42,7 @@
     - [Introduction](#introduction)
     - [useDOMRef](#usedomref)
     - [useClapState](#useclapstate)
+    - [useEffectAfterMount](#useeffectaftermount)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
@@ -1809,10 +1810,16 @@ export default Usage
 
 ```<MediumClap />``` -> Logic + UI components
 ```<MediumClap />``` -> L + O + G + I + C + UI components
+
+Extract logic into small custom reusable hooks
 - useClapAnimation
 - useDOMRef
 - UseEffectAfterMount
 - useClapState
+
+Custom reusable hook consists of 
+- state property: keep the mutable state
+- callback handler: updated state with setState()
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -1858,6 +1865,21 @@ const useClapState = (initialState = INITIAL_STATE) => {
 }
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
+### useEffectAfterMount
+
+```javascript
+const useEffectAfterMount = (cb, deps) => {
+  const componentJustMounted = useRef(true)
+  useEffect(() => {
+    if(!componentJustMounted.current){
+      return cb()
+    }
+    componentJustMounted.current = false
+  }, deps)
+}
+```
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 8: The Props Collection Pattern**
