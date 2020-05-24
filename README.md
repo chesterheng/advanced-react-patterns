@@ -40,6 +40,7 @@
     - [Practical usage of control props](#practical-usage-of-control-props)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
     - [Introduction](#introduction)
+    - [useDOMRef](#usedomref)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
@@ -1811,6 +1812,25 @@ export default Usage
 - useDOMRef
 - UseEffectAfterMount
 - useClapState
+
+**[⬆ back to top](#table-of-contents)**
+
+### useDOMRef
+
+```javascript
+const useDOMRef = () => {
+  const [DOMRef, setRefState] = useState({})
+  
+  const setRef = useCallback(node => {
+    setRefState(prevRefState => ({
+      ...prevRefState,
+      [node.dataset.refkey]: node
+    }))
+  }, [])
+
+  return [DOMRef, setRef]
+}
+```
 
 **[⬆ back to top](#table-of-contents)**
 
