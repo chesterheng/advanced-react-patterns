@@ -48,6 +48,7 @@
     - [Implementing props collections](#implementing-props-collections)
     - [Accessibility and props collections](#accessibility-and-props-collections)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
+    - [What are props getters](#what-are-props-getters)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
@@ -2002,6 +2003,31 @@ const useClapState = (initialState = INITIAL_STATE) => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 9: The Props Getters Pattern**
+
+### What are props getters
+
+Props getters, very much like props collection, provide a collection of props to users of your hooks/component. The difference being the provision of a getter - a function invoked to return the collection of props.
+
+- Props Collection is an object
+- Props Getter is a function
+
+```javascript
+// getPropsCollection is a function. 
+// When invoked, returns an object
+// e.g. { prop1, prop2, prop3 }
+const { getPropsCollection } = useYourHook()
+```
+
+The added advantage a prop getter has is it can be invoked with arguments to override or extend the collection of props returned.
+
+```javascript
+  const { getPropsCollection } = useYourHook()
+  const propsCollection = getPropsCollection({
+    onClick: myClickHandler,
+    // user specific values may be passed in.
+    data-testId: `my-test-id`
+  })
+```
 
 **[⬆ back to top](#table-of-contents)**
 
