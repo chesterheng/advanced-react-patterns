@@ -34,6 +34,8 @@
     - [Extending styles via a style prop](#extending-styles-via-a-style-prop)
     - [Extending styles via a className prop](#extending-styles-via-a-classname-prop)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
+    - [The Problem to be solved](#the-problem-to-be-solved)
+    - [What is control props?](#what-is-control-props)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
@@ -1346,7 +1348,7 @@ Open-source examples
 Pros
 
 - Intuitive Style Overrides
-  - Allow for style overrides in a way your users are already familiar with..
+  - Allow for style overrides in a way your users are already familiar with.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -1568,6 +1570,59 @@ export default Usage
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 6: The Control Props Pattern**
+
+### The Problem to be solved
+
+Existing Compound Component
+```javascript
+<MediumClap onClap={handleClap}>
+  <ClapIcon />
+  <ClapCount />
+  <ClapCountTotal />
+</MediumClap>
+```
+
+User has no control over local state clapState in MediumClap Compound Component
+- local state clapState consists of count, countTotal and isClicked
+
+**[⬆ back to top](#table-of-contents)**
+
+### What is control props?
+
+[Controlled Components](https://reactjs.org/docs/forms.html#controlled-components)
+- Only the react component can update its state.
+- state property: keep the mutable state
+- callback handler: updated state with setState()
+- Example:
+```javascript
+<input
+  value={this.state.val}
+  onChange={handleClap}
+/>
+```
+
+What is control props?
+- Perhaps inspired by React’s controlled form elements, control props allow users of your component to control the UI state via certain “control” props.
+- Example: ```<MediumClap values={} onClap={}>```
+  - values: state values passed via props
+  - onClap: state updater 
+
+Open-source examples
+- [Material UI](https://material-ui.com/)
+
+| Pros                  | Cons           |
+| :-------------------- | :------------- |
+| Inversion of Control  | Duplicate code |
+
+Pros
+
+- Inversion of Control
+  - Allow for style overrides in a way your users are already familiar with.
+
+Cons
+
+- Duplicate code
+  - For more complex scenarios, the user may have to duplicate some logic you’d have handled internally.
 
 **[⬆ back to top](#table-of-contents)**
 
