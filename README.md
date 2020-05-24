@@ -30,6 +30,7 @@
     - [Exposing state via a callback](#exposing-state-via-a-callback)
     - [Invoking the useEffect callback only after mount!](#invoking-the-useeffect-callback-only-after-mount)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
+    - [Introduction to reusable styles](#introduction-to-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
@@ -1031,17 +1032,23 @@ Pros
 
 ### How to implement the pattern
 
+- Identify parent and all its children
+- Create a context object in parent
+- All children will hook up to context object
+- All children can receive props from context object
+
+Parent Component: MediumClap - use a Provider to pass the current value to the tree below
+
+- Child Component: ClapIcon - get prop from context object
+- Child Component: ClapCountTotal - get prop from context object
+- Child Component: ClapCount - get prop from context object
+
 1. Create a context object to pass values into the tree of child components in parent component
 2. Use a Provider to pass the current value to the tree below
 3. Returns a memoized state
 4. Accepts a value prop to be passed to consuming components that are descendants of this Provider
 5. Use the special children prop to pass children elements directly into Parent component
 6. Get prop from context object instead from parent prop
-
-Parent Component: MediumClap - use a Provider to pass the current value to the tree below
-- Child Component: ClapIcon - get prop from context object
-- Child Component: ClapCountTotal - get prop from context object
-- Child Component: ClapCount - get prop from context object
 
 ```javascript
 // 1. Create a context object to pass values into the tree of child components in parent component
@@ -1301,6 +1308,40 @@ const Usage = () => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 5: Patterns for Crafting Reusable Styles**
+
+### Introduction to reusable styles
+
+- Regardless of the component you build, a common requirement is allowing the override and addition of new styles.
+- Allow users style your components like any other element/component in their app.
+
+JSX feature
+
+- className: `<div className="red">Hello</div>`
+- Inline style: `<div style={{color:'red'}}>Hello</div>`
+
+Pass in className or style as props to reuse style
+
+- Example: `<MediumClap className>Hello</MediumClap>`
+- Example: `<MediumClap style>Hello</MediumClap>`
+
+```javascript
+// As with JSX elements styling via a className and style prop should be possible
+<YourComponent className=`shouldWork`/>
+
+<YourComponent style=`shouldWork`/>
+```
+
+Open-source examples
+- [Reach UI](https://reacttraining.com/reach-ui/)
+
+| Pros                      | Cons |
+| :------------------------ | :--- |
+| Intuitive Style Overrides |      |
+
+Pros
+
+- Intuitive Style Overrides
+  - Allow for style overrides in a way your users are already familiar with..
 
 **[⬆ back to top](#table-of-contents)**
 
