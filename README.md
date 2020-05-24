@@ -55,6 +55,7 @@
     - [What are state initializers?](#what-are-state-initializers)
     - [First pattern requirement](#first-pattern-requirement)
     - [Handling resets](#handling-resets)
+    - [Handling reset side effects](#handling-reset-side-effects)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
@@ -596,6 +597,7 @@ const withClapAnimation = WrappedComponent => {
 ### New to hooks?
 
 - [Hooks API Reference](https://reactjs.org/docs/hooks-reference.html)
+- [useHooks](https://usehooks.com/)
 
 Basic Hooks
 - [Using the State Hook](https://reactjs.org/docs/hooks-state.html)
@@ -2290,6 +2292,122 @@ const Usage = () => {
     reset
   } = useClapState(userInitialState)
   ...
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Handling reset side effects
+
+```javascript
+const usePrevious = value => {
+  const ref = useRef()
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+  return ref.current
+}
+
+const useClapState = (initialState = INITIAL_STATE) => {
+  const MAXIMUM_USER_CLAP = 5
+  const userInitialState = useRef(initialState)
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+  const updateClapState = useCallback(() => { ... },[count, countTotal])
+
+  const resetRef = useRef(0) // reset counter: start from 0
+  const prevCount = usePrevious(count) // get prev count
+  const reset = useCallback(() => {
+    // reset only if prev < count or prev reach MAXIMUM_USER_CLAP
+    if(prevCount < count || prevCount === MAXIMUM_USER_CLAP) {
+      setClapState(userInitialState.current)  // reset clap state
+      resetRef.current++  // update reset counter: 0, 1, 2, 3, ...
+    }
+  }, [prevCount, count, setClapState])
+
+  const getTogglerProps = ({ onClick, ...otherProps }) => ({ ... })
+  const getCounterProps = ({ ...otherProps }) => ({ ... })
+
+  return { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps, 
+    reset, // reset function
+    resetDep: resetRef.current  // reset counter
+  }
+}
+```
+
+```javascript
+const Usage = () => {
+  const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps,
+    reset,
+    resetDep
+  } = useClapState(userInitialState)
+
+  const { count, countTotal, isClicked } = clapState
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
+  const animationTimeline = useClapAnimation({ ... })
+  useEffectAfterMount(() => { ... }, [count])
+
+  // simulate uploading api call
+  const [uploadingReset, setUpload] = useState(false)
+  useEffectAfterMount(() => {
+    setUpload(true)
+
+    const id = setTimeout(() => {
+      setUpload(false)
+    }, 3000)
+
+    return () => clearTimeout(id)
+  }, [resetDep])
+
+  const handleClick = () => console.log("CLICKED!!!")
+  
+  return (
+    <div>
+      <ClapContainer 
+        setRef={setRef}    
+        data-refkey="clapRef"
+        {...getTogglerProps({
+          'aria-pressed': false,
+          onClick: handleClick
+        })}
+      >
+        <ClapIcon isClicked={isClicked} />
+        <ClapCount 
+          setRef={setRef}
+          data-refkey="clapCountRef" 
+          {...getCounterProps()}
+        />
+        <CountTotal 
+          countTotal={countTotal}
+          setRef={setRef}
+          data-refkey="clapCountTotalRef" />
+      </ClapContainer>
+      <section>
+        <button 
+          onClick={reset} 
+          className={userStyles.resetBtn}
+          disabled={uploadingReset}
+        >
+          reset
+        </button>
+        <pre className={userStyles.resetMsg}>
+          {JSON.stringify({count, countTotal, isClicked})}
+        </pre>
+        <pre className={userStyles.resetMsg}>
+          { uploadingReset ? `uploading reset ${resetDep} ...` : '' }
+        </pre>
+      </section>
+    </div>
+    
+  )
 }
 ```
 
