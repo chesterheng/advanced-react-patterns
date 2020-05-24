@@ -41,6 +41,7 @@
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
     - [Introduction](#introduction)
     - [useDOMRef](#usedomref)
+    - [useClapState](#useclapstate)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
@@ -1829,6 +1830,31 @@ const useDOMRef = () => {
   }, [])
 
   return [DOMRef, setRef]
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### useClapState
+
+```javascript
+const useClapState = (initialState = INITIAL_STATE) => {
+  const MAXIMUM_USER_CLAP = 50
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+
+  const updateClapState = useCallback(() => {
+    setClapState(({ count, countTotal }) => ({
+      count: Math.min(count + 1, MAXIMUM_USER_CLAP),
+      countTotal: 
+        count < MAXIMUM_USER_CLAP 
+          ? countTotal + 1 
+          : countTotal,
+      isClicked: true,
+    }))
+  },[count, countTotal])
+
+  return [clapState, updateClapState]
 }
 ```
 
