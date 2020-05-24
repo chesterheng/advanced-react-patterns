@@ -155,7 +155,7 @@ const callFnsInSquence = (...fns) => (...args) => {
 }
 
 const MAXIMUM_USER_CLAP = 50
-const reducer = ({ count, countTotal }, { type, payload }) => {
+const internalReducer = ({ count, countTotal }, { type, payload }) => {
   switch (type) {
     case 'clap':
       return {
@@ -174,7 +174,10 @@ const reducer = ({ count, countTotal }, { type, payload }) => {
   return state
 }
 
-const useClapState = (initialState = INITIAL_STATE) => {
+const useClapState = (
+  initialState = INITIAL_STATE, 
+  reducer = internalReducer
+) => {
   const userInitialState = useRef(initialState)
   const [clapState, dispatch] = useReducer(reducer, initialState)
   const { count, countTotal } = clapState
@@ -279,6 +282,20 @@ const userInitialState = {
 }
 
 const Usage = () => {
+  const reducer = ({ count, countTotal }, { type, payload }) => {
+    switch (type) {
+      case 'clap':
+        return { 
+          count: Math.min(count + 1, 10),
+          countTotal: count < 10 ? countTotal + 1 : countTotal,
+          isClicked: true
+        }
+      case 'reset':
+          return payload
+      default:
+        break;
+    }
+  }
   const { 
     clapState, 
     updateClapState, 
@@ -286,7 +303,7 @@ const Usage = () => {
     getCounterProps,
     reset,
     resetDep
-  } = useClapState(userInitialState)
+  } = useClapState(userInitialState, reducer)
   const { count, countTotal, isClicked } = clapState
 
   const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()

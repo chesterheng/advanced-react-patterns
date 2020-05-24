@@ -60,6 +60,7 @@
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
     - [The state reducer pattern](#the-state-reducer-pattern)
     - [From useState to useReducer](#from-usestate-to-usereducer)
+    - [Passing a user custom reducer](#passing-a-user-custom-reducer)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
 ## **Section 1: Introduction**
@@ -2521,6 +2522,56 @@ const useClapState = (initialState = INITIAL_STATE) => {
     resetDep: resetRef.current
   }
 }
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Passing a user custom reducer
+
+```javascript
+const useClapState = (
+  initialState = INITIAL_STATE, 
+  reducer = internalReducer
+) => { ... }
+```
+
+```javascript
+const Usage = () => {
+  const reducer = ({ count, countTotal }, { type, payload }) => {
+    switch (type) {
+      case 'clap':
+        return { 
+          count: Math.min(count + 1, 10),
+          countTotal: count < 10 ? countTotal + 1 : countTotal,
+          isClicked: true
+        }
+      case 'reset':
+          return payload
+      default:
+        break;
+    }
+  }
+  const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps,
+    reset,
+    resetDep
+  } = useClapState(userInitialState, reducer) // user custom reducer
+
+  const { count, countTotal, isClicked } = clapState
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
+  const animationTimeline = useClapAnimation({ ... })
+  useEffectAfterMount(() => { ... }, [count])
+
+  const [uploadingReset, setUpload] = useState(false)
+  useEffectAfterMount(() => { ... }, [resetDep])
+  const handleClick = () => console.log("CLICKED!!!")
+  return ( ... )
+}
+
+export default Usage
 ```
 
 **[⬆ back to top](#table-of-contents)**
