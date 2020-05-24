@@ -49,6 +49,7 @@
     - [Accessibility and props collections](#accessibility-and-props-collections)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
     - [What are props getters](#what-are-props-getters)
+    - [From collections to getters](#from-collections-to-getters)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
@@ -2027,6 +2028,61 @@ The added advantage a prop getter has is it can be invoked with arguments to ove
     // user specific values may be passed in.
     data-testId: `my-test-id`
   })
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### From collections to getters
+
+```javascript
+const useClapState = (initialState = INITIAL_STATE) => {
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+  const updateClapState = useCallback(() => {
+    setClapState(({ count, countTotal }) => ({ ... },[count, countTotal])
+
+  const getTogglerProps = () => ({
+    onClick: updateClapState
+  })
+
+  const getCounterProps = () => ({
+    count
+  })
+
+  return { clapState, updateClapState, getTogglerProps, getCounterProps }
+}
+
+const Usage = () => {
+  const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps 
+  } = useClapState()
+  const { count, countTotal, isClicked } = clapState
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
+  const animationTimeline = useClapAnimation({ ... })
+  useEffectAfterMount(() => { ... }, [count])
+
+  return (
+    <ClapContainer 
+      setRef={setRef}    
+      data-refkey="clapRef"
+      {...getTogglerProps()}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount 
+        setRef={setRef}
+        data-refkey="clapCountRef" 
+        {...getCounterProps()}
+      />
+      <CountTotal 
+        countTotal={countTotal}
+        setRef={setRef}
+        data-refkey="clapCountTotalRef" />
+    </ClapContainer>
+  )
+}
 ```
 
 **[⬆ back to top](#table-of-contents)**

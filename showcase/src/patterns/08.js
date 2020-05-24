@@ -147,19 +147,19 @@ const useClapState = (initialState = INITIAL_STATE) => {
     }))
   },[count, countTotal])
 
-  const togglerProps = {
+  const getTogglerProps = () => ({
     onClick: updateClapState,
     'aria-pressed': clapState.isClicked
-  }
+  })
 
-  const counterProps = {
+  const getCounterProps = () => ({
     count,
     'aria-valuemax': MAXIMUM_USER_CLAP,
     'aria-valuemin': 0,
     'aria-valuenow': count,
-  }
+  })
 
-  return { clapState, updateClapState, togglerProps, counterProps }
+  return { clapState, updateClapState, getTogglerProps, getCounterProps }
 }
 
 const useEffectAfterMount = (cb, deps) => {
@@ -222,8 +222,8 @@ const Usage = () => {
   const { 
     clapState, 
     updateClapState, 
-    togglerProps, 
-    counterProps 
+    getTogglerProps, 
+    getCounterProps 
   } = useClapState()
   const { count, countTotal, isClicked } = clapState
 
@@ -243,13 +243,13 @@ const Usage = () => {
     <ClapContainer 
       setRef={setRef}    
       data-refkey="clapRef"
-      {...togglerProps}
+      {...getTogglerProps()}
     >
       <ClapIcon isClicked={isClicked} />
       <ClapCount 
         setRef={setRef}
         data-refkey="clapCountRef" 
-        {...counterProps}
+        {...getCounterProps()}
       />
       <CountTotal 
         countTotal={countTotal}
