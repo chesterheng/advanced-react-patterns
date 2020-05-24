@@ -32,6 +32,7 @@
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
     - [Introduction to reusable styles](#introduction-to-reusable-styles)
     - [Extending styles via a style prop](#extending-styles-via-a-style-prop)
+    - [Extending styles via a className prop](#extending-styles-via-a-classname-prop)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
@@ -1317,19 +1318,22 @@ const Usage = () => {
 
 JSX feature
 
-- className: `<div className="red">Hello</div>`
 - Inline style: `<div style={{color:'red'}}>Hello</div>`
-
-Pass in className or style as props to reuse style
-
-- Example: `<MediumClap className>Hello</MediumClap>`
-- Example: `<MediumClap style>Hello</MediumClap>`
+- className: `<div className="red">Hello</div>`
 
 ```javascript
-// As with JSX elements styling via a className and style prop should be possible
-<YourComponent className=`shouldWork`/>
+// Pass in style as props to reuse style
+<MediumClap style={{ background: '#8cacea' }}>Hello</MediumClap>
 
-<YourComponent style=`shouldWork`/>
+const MediumClap = (style = {}) => <div style={style}></div>
+```
+
+```javascript
+// Pass in className as props to reuse style
+import userStyles from './usage.css'
+<MediumClap className={userStyles.clap}>Hello</MediumClap>
+
+const MediumClap = (className) => <div className={className}></div>
 ```
 
 Open-source examples
@@ -1347,6 +1351,13 @@ Pros
 **[⬆ back to top](#table-of-contents)**
 
 ### Extending styles via a style prop
+
+```javascript
+// Pass in style as props to reuse style
+<MediumClap style={{ background: '#8cacea' }}>Hello</MediumClap>
+
+const MediumClap = (style = {}) => <div style={style}></div>
+```
 
 ```javascript
 const MediumClap = ({ children, onClap, style : userStyles = {} }) => {
@@ -1426,6 +1437,123 @@ const Usage = () => {
         <MediumClap.Icon />
         <MediumClap.Count style={{ background: '#8cacea' }} />
         <MediumClap.Total style={{ background: '#8cacea', color: 'black' }} />
+      </MediumClap>
+      {!!count && (
+        <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      )}
+    </div>
+  )
+}
+
+export default Usage
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Extending styles via a className prop
+
+```javascript
+// Pass in className as props to reuse style
+import userStyles from './usage.css'
+<MediumClap className={userStyles.clap}>Hello</MediumClap>
+
+const MediumClap = (className) => <div className={className}></div>
+```
+
+```javascript
+import userCustomStyles from './usage.css'
+
+const MediumClap = ({ 
+  children, 
+  onClap, 
+  style : userStyles = {}, 
+  className 
+}) => {
+  ...
+  const handleClapClick = () => { ... }
+  const memoizedValue = useMemo( ... )
+
+  // className -> 'clap-1234 classUser'
+  const classNames = [styles.clap, className].join(' ').trim()
+
+  return (
+    <Provider value={memoizedValue}>
+      <button 
+        ref={setRef} 
+        data-refkey="clapRef"
+        className={classNames} 
+        onClick={handleClapClick}
+        style={userStyles}
+      >
+        {children}
+      </button>
+    </Provider>
+  )
+}
+
+const ClapIcon = ({ style: userStyles = {}, className }) => {
+  const { isClicked } = useContext(MediumClapContext)
+  const classNames = [styles.icon, isClicked ? styles.checked : '', className].join(' ').trim()
+  return (
+    <span>
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='-549 338 100.1 125'
+        className={classNames}
+        style={userStyles}
+      >
+        ...
+      </svg>
+    </span>
+  )
+}
+
+const ClapCount = ({ style: userStyles = {}, className }) => {
+  const { count, setRef } = useContext(MediumClapContext)
+  const classNames = [styles.count, className].join(' ').trim()
+  return (
+    <span 
+      ref={setRef} 
+      data-refkey="clapCountRef" 
+      className={classNames}
+      style={userStyles}
+    >
+      + {count}
+    </span>
+  )
+}
+
+const ClapCountTotal = ({ style: userStyles = {}, className }) => {
+  const { countTotal, setRef } = useContext(MediumClapContext)
+  const classNames = [styles.total, className].join(' ').trim()
+  return (
+    <span 
+      ref={setRef} 
+      data-refkey="clapCountTotalRef" 
+      className={classNames}
+      style={userStyles}
+    >
+      {countTotal}
+    </span>
+  )
+}
+
+MediumClap.Icon = ClapIcon
+MediumClap.Count = ClapCount
+MediumClap.Total = ClapCountTotal
+
+const Usage = () => {
+  const [count, setCount] = useState(0)
+  const handleClap = (clapState) => { ... }
+  return (
+    <div style={{ width: '100%' }}>
+      <MediumClap 
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
       </MediumClap>
       {!!count && (
         <div className={styles.info}>{`You have clapped ${count} times`}</div>
