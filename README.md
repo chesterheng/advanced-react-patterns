@@ -52,6 +52,7 @@
     - [From collections to getters](#from-collections-to-getters)
     - [Use cases for prop getters](#use-cases-for-prop-getters)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
+    - [What are state initializers?](#what-are-state-initializers)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
@@ -2031,6 +2032,9 @@ The added advantage a prop getter has is it can be invoked with arguments to ove
   })
 ```
 
+Open-source examples
+- [React Table](https://github.com/tannerlinsley/react-table)
+
 **[⬆ back to top](#table-of-contents)**
 
 ### From collections to getters
@@ -2172,6 +2176,43 @@ const useClapState = (initialState = INITIAL_STATE) => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 10: The State Initialiser Pattern**
+
+### What are state initializers?
+
+A simple pattern that allows for configurable initial state, and an optional state reset handler.
+
+State Managed = Motion
+- Initial State: Not in Motion
+- Update State: Accelerator / Gas Pedal
+- Reset State: Brake
+
+```javascript
+// user may call reset fn to reset state
+// user passes in some initial state value
+const { value, reset } = useYourHook(initialState)
+
+// initialState is passed into your internal state mechanism
+const [internalState] = useState(initialState)
+```
+
+Open-source examples
+- [Formik](https://jaredpalmer.com/formik/)
+
+Passing props to state is generally frowned upon, which is why you have to make sure the value passed here is only an initialiser.
+
+| Pros                            | Cons           |
+| :------------------------------ | :------------- |
+| Important Feature for Most UIs  | May be Trivial |
+
+Pros
+
+- Important Feature for Most UIs
+  - Setting and resetting state is typically a very important requirement for most UI components. This gives a lot of flexibility to your users.
+
+Cons
+
+- May be Trivial
+  - You may find yourself building a component/custom hook where state initialisers are perhaps trivial.
 
 **[⬆ back to top](#table-of-contents)**
 
