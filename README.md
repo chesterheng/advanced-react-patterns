@@ -31,6 +31,7 @@
     - [Invoking the useEffect callback only after mount!](#invoking-the-useeffect-callback-only-after-mount)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
     - [Introduction to reusable styles](#introduction-to-reusable-styles)
+    - [Extending styles via a style prop](#extending-styles-via-a-style-prop)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
@@ -1342,6 +1343,99 @@ Pros
 
 - Intuitive Style Overrides
   - Allow for style overrides in a way your users are already familiar with..
+
+**[⬆ back to top](#table-of-contents)**
+
+### Extending styles via a style prop
+
+```javascript
+const MediumClap = ({ children, onClap, style : userStyles = {} }) => {
+  ...
+  return (
+    <Provider value={memoizedValue}>
+      <button 
+        ref={setRef} 
+        data-refkey="clapRef"
+        className={styles.clap} 
+        onClick={handleClapClick}
+        style={userStyles}
+      >
+        {children}
+      </button>
+    </Provider>
+  )
+}
+
+const ClapIcon = ({ style: userStyles = {} }) => {
+  const { isClicked } = useContext(MediumClapContext)
+  return (
+    <span>
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='-549 338 100.1 125'
+        className={`${styles.icon} ${isClicked && styles.checked}`}
+        style={userStyles}
+      >
+      ...
+      </svg>
+    </span>
+  )
+}
+
+const ClapCount = ({ style: userStyles = {} }) => {
+  const { count, setRef } = useContext(MediumClapContext)
+  return (
+    <span 
+      ref={setRef} 
+      data-refkey="clapCountRef" 
+      className={styles.count}
+      style={userStyles}
+    >
+      + {count}
+    </span>
+  )
+}
+
+const ClapCountTotal = ({ style: userStyles = {} }) => {
+  const { countTotal, setRef } = useContext(MediumClapContext)
+  return (
+    <span 
+      ref={setRef} 
+      data-refkey="clapCountTotalRef" 
+      className={styles.total}
+      style={userStyles}
+    >
+      {countTotal}
+    </span>
+  )
+}
+
+MediumClap.Icon = ClapIcon
+MediumClap.Count = ClapCount
+MediumClap.Total = ClapCountTotal
+
+const Usage = () => {
+  const [count, setCount] = useState(0)
+  const handleClap = (clapState) => { ... }
+  return (
+    <div style={{ width: '100%' }}>
+      <MediumClap 
+        onClap={handleClap} 
+        style={{ border: '1px solid red' }}
+      >
+        <MediumClap.Icon />
+        <MediumClap.Count style={{ background: '#8cacea' }} />
+        <MediumClap.Total style={{ background: '#8cacea', color: 'black' }} />
+      </MediumClap>
+      {!!count && (
+        <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      )}
+    </div>
+  )
+}
+
+export default Usage
+```
 
 **[⬆ back to top](#table-of-contents)**
 
