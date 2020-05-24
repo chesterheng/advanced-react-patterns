@@ -46,6 +46,7 @@
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
     - [What are props collections?](#what-are-props-collections)
     - [Implementing props collections](#implementing-props-collections)
+    - [Accessibility and props collections](#accessibility-and-props-collections)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
@@ -1967,6 +1968,34 @@ const Usage = () => {
         data-refkey="clapCountTotalRef" />
     </ClapContainer>
   )
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Accessibility and props collections
+
+```javascript
+const useClapState = (initialState = INITIAL_STATE) => {
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+  const updateClapState = useCallback(() => {
+    setClapState(({ count, countTotal }) => ({ ... }))
+  },[count, countTotal])
+
+  const togglerProps = {
+    onClick: updateClapState,
+    'aria-pressed': clapState.isClicked
+  }
+
+  const counterProps = {
+    count,
+    'aria-valuemax': MAXIMUM_USER_CLAP,
+    'aria-valuemin': 0,
+    'aria-valuenow': count,
+  }
+
+  return { clapState, updateClapState, togglerProps, counterProps }
 }
 ```
 
