@@ -160,32 +160,15 @@ const useEffectAfterMount = (cb, deps) => {
   }, deps)
 }
 
-const MediumClap = () => {
-  const [clapState, updateClapState] = useClapState()
-  const { count, countTotal, isClicked } = clapState
-  
-  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
-
-  const animationTimeline = useClapAnimation({
-    clapEl: clapRef, 
-    clapCountEl: clapCountRef, 
-    clapCountTotalEl: clapCountTotalRef
-  })
-
-  useEffectAfterMount(() => {
-    animationTimeline.replay()
-  }, [count])
-
+const ClapContainer = ({ children, setRef, handleClick, ...restProps }) => {
   return (
     <button 
-      ref={setRef} 
-      data-refkey="clapRef"
+      ref={setRef}
       className={styles.clap} 
-      onClick={updateClapState}
+      onClick={handleClick}
+      {...restProps}
     >
-      <ClapIcon isClicked={isClicked} />
-      <ClapCount count={count} setRef={setRef} />
-      <CountTotal countTotal={countTotal} setRef={setRef} />
+      {children}
     </button>
   )
 }
@@ -203,24 +186,59 @@ const ClapIcon = ({ isClicked }) => (
   </span>
 )
 
-const ClapCount = ({ count, setRef }) => (
+const ClapCount = ({ count, setRef, ...restProps }) => (
   <span 
     ref={setRef} 
-    data-refkey="clapCountRef" 
     className={styles.count}
+    {...restProps}
   >
     + {count}
   </span>
 )
 
-const CountTotal = ({ countTotal, setRef }) => (
+const CountTotal = ({ countTotal, setRef, ...restProps }) => (
   <span 
     ref={setRef} 
-    data-refkey="clapCountTotalRef" 
     className={styles.total}
+    {...restProps}
   >
     {countTotal}
   </span>
 )
 
-export default MediumClap
+const Usage = () => {
+  const [clapState, updateClapState] = useClapState()
+  const { count, countTotal, isClicked } = clapState
+
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
+
+  const animationTimeline = useClapAnimation({
+    clapEl: clapRef, 
+    clapCountEl: clapCountRef, 
+    clapCountTotalEl: clapCountTotalRef
+  })
+
+  useEffectAfterMount(() => {
+    animationTimeline.replay()
+  }, [count])
+
+  return (
+    <ClapContainer 
+      handleClick={updateClapState}
+      setRef={setRef}    
+      data-refkey="clapRef"
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount 
+        count={count}
+        setRef={setRef}
+        data-refkey="clapCountRef" />
+      <CountTotal 
+        countTotal={countTotal}
+        setRef={setRef}
+        data-refkey="clapCountTotalRef" />
+    </ClapContainer>
+  )
+}
+
+export default Usage
