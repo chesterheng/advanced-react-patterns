@@ -54,6 +54,7 @@
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
     - [What are state initializers?](#what-are-state-initializers)
     - [First pattern requirement](#first-pattern-requirement)
+    - [Handling resets](#handling-resets)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
@@ -2238,6 +2239,55 @@ const Usage = () => {
     updateClapState, 
     getTogglerProps, 
     getCounterProps
+  } = useClapState(userInitialState)
+  ...
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Handling resets
+
+MediumClap Exercise
+
+- Initial State: pass userInitialState into useClapState
+- Update State: call updateClapState handler returned by useClapState
+- Reset State: call reset handler returned by useClapState
+
+```javascript
+const useClapState = (initialState = INITIAL_STATE) => {
+  const MAXIMUM_USER_CLAP = 50
+  const userInitialState = useRef(initialState)
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+
+  const updateClapState = useCallback(() => {
+    setClapState(({ count, countTotal }) => ({ ... }))
+  },[count, countTotal])
+
+  const reset = useCallback(() => {
+    setClapState(userInitialState.current)
+  }, [setClapState])
+
+  const getTogglerProps = ({ onClick, ...otherProps }) => ({ ... })
+  const getCounterProps = ({ ...otherProps }) => ({ ... })
+
+  return { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps, 
+    reset 
+  }
+}
+
+const Usage = () => {
+  const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps,
+    reset
   } = useClapState(userInitialState)
   ...
 }
