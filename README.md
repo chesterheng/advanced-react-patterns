@@ -36,6 +36,7 @@
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
     - [The Problem to be solved](#the-problem-to-be-solved)
     - [What is control props?](#what-is-control-props)
+    - [Implementing the pattern](#implementing-the-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
@@ -1623,6 +1624,125 @@ Cons
 
 - Duplicate code
   - For more complex scenarios, the user may have to duplicate some logic you’d have handled internally.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Implementing the pattern
+
+```javascript
+import React, { 
+  useState, 
+  useLayoutEffect, 
+  useCallback,
+  createContext,
+  useMemo,
+  useContext,
+  useEffect,
+  useRef
+} from 'react'
+import mojs from 'mo-js'
+import styles from './index.css'
+import userCustomStyles from './usage.css'
+
+const initialState = {
+  count: 0,
+  countTotal: 267,
+  isClicked: false
+}
+
+const useClapAnimation = () => { ... }
+const MediumClapContext = createContext()
+const { Provider } = MediumClapContext
+
+const MediumClap = ({ 
+  children, 
+  onClap,
+  // 1. add a values prop
+  values = null,
+  style : userStyles = {}, 
+  className 
+}) => {
+  const MAXIMUM_USER_CLAP = 50
+  const [clapState, setClapState] = useState(initialState)
+  ...
+  const componentJustMounted = useRef(false)
+  useEffect(() => {
+    // 4. if not isControlled then use clapState
+    if(componentJustMounted.current && !isControlled) {
+      console.log('onClap is called')
+      onClap && onClap(clapState)
+    } else {
+      // set to true the first time in useEffect after rendered
+      componentJustMounted.current = true
+    }
+  }, [count, onClap, isControlled])
+
+  // 2. Controlled component ? onClap : setClapState
+  const isControlled = !!values && onClap
+  const handleClapClick = () => {
+    animationTimeline.replay()
+    isControlled 
+      ? onClap(values) 
+      : setClapState(prevState => ({ ... }))
+  }
+
+  // 3. Controlled component 
+  // ? pass values to children 
+  // : pass clapState to children 
+  const getState = useCallback(
+    () => isControlled ? values : clapState, 
+    [isControlled, values, clapState]
+  )
+  const memoizedValue = useMemo(
+    () => ({
+      ...getState(), 
+      setRef
+    }), [getState, setRef]
+  )
+
+  const classNames = [styles.clap, className].join(' ').trim()
+
+  return (
+    <Provider value={memoizedValue}>
+      <button>
+        {children}
+      </button>
+    </Provider>
+  )
+}
+
+const ClapIcon = ({ style: userStyles = {}, className }) => { ... }
+const ClapCount = ({ style: userStyles = {}, className }) => { ... }
+const ClapCountTotal = ({ style: userStyles = {}, className }) => { ... }
+
+MediumClap.Icon = ClapIcon
+MediumClap.Count = ClapCount
+MediumClap.Total = ClapCountTotal
+
+const Usage = () => {
+  const [count, setCount] = useState(0)
+  const handleClap = (clapState) => {
+    setCount(clapState.count)
+  }
+  return (
+    <div style={{ width: '100%' }}>
+      <MediumClap 
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
+      </MediumClap>
+      {!!count && (
+        <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      )}
+    </div>
+  )
+}
+
+export default Usage
+```
 
 **[⬆ back to top](#table-of-contents)**
 

@@ -133,7 +133,9 @@ const { Provider } = MediumClapContext
 // Use the special children prop to pass children elements directly into MediumClap
 const MediumClap = ({ 
   children, 
-  onClap, 
+  onClap,
+  // 1. add a values prop
+  values = null,
   style : userStyles = {}, 
   className 
 }) => {
@@ -155,38 +157,51 @@ const MediumClap = ({
     clapCountTotalEl: clapCountTotalRef
   })
 
-  // 1. default value is false
-  // 1. set to true when MediumClap is rendered
+  // default value is false
+  // set to true when MediumClap is rendered
   const componentJustMounted = useRef(false)
   useEffect(() => {
-    if(componentJustMounted.current){
-      // 3. next time count changes
+    // 4. if not isControlled then use clapState
+    if(componentJustMounted.current && !isControlled){
+      // next time count changes
       console.log('onClap is called')
       onClap && onClap(clapState)
     } else {
-      // 2. set to true the first time in useEffect after rendered
+      // set to true the first time in useEffect after rendered
       componentJustMounted.current = true
     }
-  }, [count])
+  }, [count, onClap, isControlled])
 
+  // 2. Controlled component ? onClap : setClapState
+  const isControlled = !!values && onClap
   const handleClapClick = () => {
     animationTimeline.replay()
-    setClapState(prevState => ({
-      count: Math.min(prevState.count + 1, MAXIMUM_USER_CLAP),
-      countTotal: 
-        count < MAXIMUM_USER_CLAP 
-          ? prevState.countTotal + 1 
-          : prevState.countTotal,
-      isClicked: true,
-    }))
+    isControlled 
+      ? onClap(values) 
+      : setClapState(prevState => ({
+          count: Math.min(prevState.count + 1, MAXIMUM_USER_CLAP),
+          countTotal: 
+            count < MAXIMUM_USER_CLAP 
+              ? prevState.countTotal + 1 
+              : prevState.countTotal,
+          isClicked: true,
+        }))
   }
+
+  // 3. Controlled component 
+  // ? pass values to children 
+  // : pass clapState to children 
+  const getState = useCallback(
+    () => isControlled ? values : clapState, 
+    [isControlled, values, clapState]
+  )
 
   // Returns a memoized state.
   const memoizedValue = useMemo(
     () => ({
-      ...clapState, 
+      ...getState(), 
       setRef
-    }), [clapState, setRef]
+    }), [getState, setRef]
   )
 
   // className -> 'clap-1234 classUser'
