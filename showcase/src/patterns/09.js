@@ -232,13 +232,19 @@ const CountTotal = ({ countTotal, setRef, ...restProps }) => (
   </span>
 )
 
+const userInitialState = {
+  count: 20,
+  countTotal: 1000,
+  isClicked: true
+}
+
 const Usage = () => {
   const { 
     clapState, 
     updateClapState, 
     getTogglerProps, 
     getCounterProps 
-  } = useClapState()
+  } = useClapState(userInitialState)
   const { count, countTotal, isClicked } = clapState
 
   const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()

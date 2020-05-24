@@ -53,6 +53,7 @@
     - [Use cases for prop getters](#use-cases-for-prop-getters)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
     - [What are state initializers?](#what-are-state-initializers)
+    - [First pattern requirement](#first-pattern-requirement)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
@@ -2213,6 +2214,34 @@ Cons
 
 - May be Trivial
   - You may find yourself building a component/custom hook where state initialisers are perhaps trivial.
+
+**[⬆ back to top](#table-of-contents)**
+
+### First pattern requirement
+
+MediumClap Exercise
+
+- Initial State: pass userInitialState into useClapState
+- Update State: 
+- Reset State: 
+
+```javascript
+const userInitialState = {
+  count: 20,
+  countTotal: 1000,
+  isClicked: true
+}
+
+const Usage = () => {
+  const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps
+  } = useClapState(userInitialState)
+  ...
+}
+```
 
 **[⬆ back to top](#table-of-contents)**
 
