@@ -177,7 +177,7 @@ const MediumClap = ({
   const handleClapClick = () => {
     animationTimeline.replay()
     isControlled 
-      ? onClap(values) 
+      ? onClap() 
       : setClapState(prevState => ({
           count: Math.min(prevState.count + 1, MAXIMUM_USER_CLAP),
           countTotal: 
@@ -284,13 +284,27 @@ MediumClap.Count = ClapCount
 MediumClap.Total = ClapCountTotal
 // import MediumClap, { Icon, Count, Total } from 'medium-clap'
 
+const INITIAL_STATE = {
+  count: 0,
+  countTotal: 2100,
+  isClicked: false
+}
+const MAXIMUM_CLAP_VAL = 10
+
 // MediumClap component don’t know their children ahead of time. 
 // Use the special children prop to pass children elements directly into MediumClap
 const Usage = () => {
   // expose count, countTotal and isClicked
+  const [state, setState] = useState(INITIAL_STATE)
   const [count, setCount] = useState(0)
   const handleClap = (clapState) => {
-    setCount(clapState.count)
+    clapState 
+    ? setCount(clapState.count) 
+    : setState(({ count, countTotal }) => ({
+      count:  Math.min(count + 1, MAXIMUM_CLAP_VAL),
+      countTotal: count < MAXIMUM_CLAP_VAL ? countTotal + 1 : countTotal,
+      isClicked: true
+    }))
   }
     // count = 0
     // !count = true
@@ -305,8 +319,32 @@ const Usage = () => {
         <MediumClap.Count className={userCustomStyles.count} />
         <MediumClap.Total className={userCustomStyles.total} />
       </MediumClap>
+
+      <MediumClap
+        values={state}
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
+      </MediumClap>
+
+      <MediumClap
+        values={state}
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
+      </MediumClap>
+      
       {!!count && (
-        <div className={styles.info}>{`You have clapped ${count} times`}</div>
+        <div className={styles.info}>{`You have clapped internal count ${count} times`}</div>
+      )}
+      {!!state.count && (
+        <div className={styles.info}>{`You have clapped user count ${state.count} times`}</div>
       )}
     </div>
   )

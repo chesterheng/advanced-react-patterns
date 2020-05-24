@@ -37,6 +37,7 @@
     - [The Problem to be solved](#the-problem-to-be-solved)
     - [What is control props?](#what-is-control-props)
     - [Implementing the pattern](#implementing-the-pattern)
+    - [Practical usage of control props](#practical-usage-of-control-props)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
@@ -1630,20 +1631,6 @@ Cons
 ### Implementing the pattern
 
 ```javascript
-import React, { 
-  useState, 
-  useLayoutEffect, 
-  useCallback,
-  createContext,
-  useMemo,
-  useContext,
-  useEffect,
-  useRef
-} from 'react'
-import mojs from 'mo-js'
-import styles from './index.css'
-import userCustomStyles from './usage.css'
-
 const initialState = {
   count: 0,
   countTotal: 267,
@@ -1665,6 +1652,17 @@ const MediumClap = ({
   const MAXIMUM_USER_CLAP = 50
   const [clapState, setClapState] = useState(initialState)
   ...
+  // 2. Controlled component ?
+  const isControlled = !!values && onClap
+
+  // 3. Controlled component ? onClap : setClapState
+  const handleClapClick = () => {
+    animationTimeline.replay()
+    isControlled 
+      ? onClap() 
+      : setClapState(prevState => ({ ... }))
+  }
+
   const componentJustMounted = useRef(false)
   useEffect(() => {
     // 4. if not isControlled then use clapState
@@ -1672,23 +1670,11 @@ const MediumClap = ({
       console.log('onClap is called')
       onClap && onClap(clapState)
     } else {
-      // set to true the first time in useEffect after rendered
       componentJustMounted.current = true
     }
   }, [count, onClap, isControlled])
 
-  // 2. Controlled component ? onClap : setClapState
-  const isControlled = !!values && onClap
-  const handleClapClick = () => {
-    animationTimeline.replay()
-    isControlled 
-      ? onClap(values) 
-      : setClapState(prevState => ({ ... }))
-  }
-
-  // 3. Controlled component 
-  // ? pass values to children 
-  // : pass clapState to children 
+  // 5. Controlled component ? pass values to children : pass clapState to children 
   const getState = useCallback(
     () => isControlled ? values : clapState, 
     [isControlled, values, clapState]
@@ -1701,23 +1687,22 @@ const MediumClap = ({
   )
 
   const classNames = [styles.clap, className].join(' ').trim()
-
   return (
     <Provider value={memoizedValue}>
-      <button>
+      <button 
+        ref={setRef} 
+        data-refkey="clapRef"
+        className={classNames} 
+        onClick={handleClapClick}
+        style={userStyles}
+      >
         {children}
       </button>
     </Provider>
   )
 }
 
-const ClapIcon = ({ style: userStyles = {}, className }) => { ... }
-const ClapCount = ({ style: userStyles = {}, className }) => { ... }
-const ClapCountTotal = ({ style: userStyles = {}, className }) => { ... }
-
-MediumClap.Icon = ClapIcon
-MediumClap.Count = ClapCount
-MediumClap.Total = ClapCountTotal
+...
 
 const Usage = () => {
   const [count, setCount] = useState(0)
@@ -1736,6 +1721,75 @@ const Usage = () => {
       </MediumClap>
       {!!count && (
         <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      )}
+    </div>
+  )
+}
+
+export default Usage
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Practical usage of control props
+
+```javascript
+const INITIAL_STATE = {
+  count: 0,
+  countTotal: 2100,
+  isClicked: false
+}
+const MAXIMUM_CLAP_VAL = 10
+
+const Usage = () => {
+  const [state, setState] = useState(INITIAL_STATE)
+  const [count, setCount] = useState(0)
+  const handleClap = (clapState) => {
+    clapState 
+    ? setCount(clapState.count) 
+    : setState(({ count, countTotal }) => ({
+      count:  Math.min(count + 1, MAXIMUM_CLAP_VAL),
+      countTotal: count < MAXIMUM_CLAP_VAL ? countTotal + 1 : countTotal,
+      isClicked: true
+    }))
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      <MediumClap 
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
+      </MediumClap>
+
+      <MediumClap
+        values={state}
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
+      </MediumClap>
+
+      <MediumClap
+        values={state}
+        onClap={handleClap} 
+        className={userCustomStyles.clap}
+      >
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
+      </MediumClap>
+      
+      {!!count && (
+        <div className={styles.info}>{`You have clapped internal count ${count} times`}</div>
+      )}
+      {!!state.count && (
+        <div className={styles.info}>{`You have clapped user count ${state.count} times`}</div>
       )}
     </div>
   )
