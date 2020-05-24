@@ -3,7 +3,8 @@ import React, {
   useLayoutEffect, 
   useCallback,
   useRef,
-  useEffect 
+  useEffect,
+  useReducer
 } from 'react'
 import mojs from 'mo-js'
 import styles from './index.css'
@@ -153,32 +154,43 @@ const callFnsInSquence = (...fns) => (...args) => {
   fns.forEach(fn => fn && fn(...args))
 }
 
-const useClapState = (initialState = INITIAL_STATE) => {
-  const MAXIMUM_USER_CLAP = 50
-  const userInitialState = useRef(initialState)
-  const [clapState, setClapState] = useState(initialState)
-  const { count, countTotal } = clapState
+const MAXIMUM_USER_CLAP = 50
+const reducer = ({ count, countTotal }, { type, payload }) => {
+  switch (type) {
+    case 'clap':
+      return {
+        count: Math.min(count + 1, MAXIMUM_USER_CLAP),
+        countTotal: 
+          count < MAXIMUM_USER_CLAP 
+            ? countTotal + 1 
+            : countTotal,
+        isClicked: true,
+      }
+    case 'reset': 
+      return payload
+    default:
+      break;
+  }
+  return state
+}
 
-  const updateClapState = useCallback(() => {
-    setClapState(({ count, countTotal }) => ({
-      count: Math.min(count + 1, MAXIMUM_USER_CLAP),
-      countTotal: 
-        count < MAXIMUM_USER_CLAP 
-          ? countTotal + 1 
-          : countTotal,
-      isClicked: true,
-    }))
-  },[count, countTotal])
+const useClapState = (initialState = INITIAL_STATE) => {
+  const userInitialState = useRef(initialState)
+  const [clapState, dispatch] = useReducer(reducer, initialState)
+  const { count, countTotal } = clapState
+  
+  // not pass down to user, can remove useCallback
+  const updateClapState = () => dispatch({ type: 'clap' })
 
   // glorified counter
   const resetRef = useRef(0) // 0, 1, 2, 3, ...
   const prevCount = usePrevious(count)
   const reset = useCallback(() => {
     if(prevCount < count || prevCount === MAXIMUM_USER_CLAP) {
-      setClapState(userInitialState.current)
+      dispatch({ type: 'reset', payload: userInitialState.current })
       resetRef.current++
     }
-  }, [prevCount, count, setClapState])
+  }, [prevCount, count, dispatch])
 
   const getTogglerProps = ({ onClick, ...otherProps }) => ({
     onClick: callFnsInSquence(updateClapState, onClick),

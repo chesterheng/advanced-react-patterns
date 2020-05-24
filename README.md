@@ -59,6 +59,7 @@
     - [How usePrevious works](#how-useprevious-works)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
     - [The state reducer pattern](#the-state-reducer-pattern)
+    - [From useState to useReducer](#from-usestate-to-usereducer)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
 ## **Section 1: Introduction**
@@ -2460,6 +2461,67 @@ Cons
 
 - Complexity
   - The pattern is arguably the most complex of the bunch to implement.
+
+**[⬆ back to top](#table-of-contents)**
+
+### From useState to useReducer
+
+```javascript
+const MAXIMUM_USER_CLAP = 50
+const reducer = ({ count, countTotal }, { type, payload }) => {
+  switch (type) {
+    case 'clap':
+      return {
+        count: Math.min(count + 1, MAXIMUM_USER_CLAP),
+        countTotal: 
+          count < MAXIMUM_USER_CLAP 
+            ? countTotal + 1 
+            : countTotal,
+        isClicked: true,
+      }
+    case 'reset': 
+      return payload
+    default:
+      break;
+  }
+  return state
+}
+```
+
+```javascript
+const useClapState = (initialState = INITIAL_STATE) => {
+  const userInitialState = useRef(initialState)
+  // from useState to useReducer
+  const [clapState, dispatch] = useReducer(reducer, initialState)
+  const { count, countTotal } = clapState
+  
+  // not pass down to user, can remove useCallback
+  // dispatch clap action
+  const updateClapState = () => dispatch({ type: 'clap' })
+
+  const resetRef = useRef(0) // 0, 1, 2, 3, ...
+  const prevCount = usePrevious(count)
+  const reset = useCallback(() => {
+    if(prevCount < count || prevCount === MAXIMUM_USER_CLAP) {
+      // dispatch reset action
+      dispatch({ type: 'reset', payload: userInitialState.current })
+      resetRef.current++
+    }
+  }, [prevCount, count, dispatch])
+
+  const getTogglerProps = ({ onClick, ...otherProps }) => ({ ... })
+  const getCounterProps = ({ ...otherProps }) => ({ ... })
+
+  return { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps, 
+    reset, 
+    resetDep: resetRef.current
+  }
+}
+```
 
 **[⬆ back to top](#table-of-contents)**
 
