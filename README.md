@@ -45,6 +45,7 @@
     - [useEffectAfterMount](#useeffectaftermount)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
     - [What are props collections?](#what-are-props-collections)
+    - [Implementing props collections](#implementing-props-collections)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
@@ -1913,6 +1914,61 @@ Cons
 
 - Inflexible
   - The collection of props can’t be modified or extended.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Implementing props collections
+
+```javascript
+const useClapState = (initialState = INITIAL_STATE) => {
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+  const updateClapState = useCallback(() => {
+    setClapState(({ count, countTotal }) => ({ ... },[count, countTotal])
+
+  const togglerProps = {
+    onClick: updateClapState
+  }
+
+  const counterProps = {
+    count
+  }
+
+  return { clapState, updateClapState, togglerProps, counterProps }
+}
+
+const Usage = () => {
+  const { 
+    clapState, 
+    updateClapState, 
+    togglerProps, 
+    counterProps 
+  } = useClapState()
+  const { count, countTotal, isClicked } = clapState
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
+  const animationTimeline = useClapAnimation({ ... })
+  useEffectAfterMount(() => { ... }, [count])
+
+  return (
+    <ClapContainer 
+      setRef={setRef}    
+      data-refkey="clapRef"
+      {...togglerProps}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount 
+        setRef={setRef}
+        data-refkey="clapCountRef" 
+        {...counterProps}
+      />
+      <CountTotal 
+        countTotal={countTotal}
+        setRef={setRef}
+        data-refkey="clapCountTotalRef" />
+    </ClapContainer>
+  )
+}
+```
 
 **[⬆ back to top](#table-of-contents)**
 

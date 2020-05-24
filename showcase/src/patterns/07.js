@@ -147,7 +147,15 @@ const useClapState = (initialState = INITIAL_STATE) => {
     }))
   },[count, countTotal])
 
-  return [clapState, updateClapState]
+  const togglerProps = {
+    onClick: updateClapState
+  }
+
+  const counterProps = {
+    count
+  }
+
+  return { clapState, updateClapState, togglerProps, counterProps }
 }
 
 const useEffectAfterMount = (cb, deps) => {
@@ -207,7 +215,12 @@ const CountTotal = ({ countTotal, setRef, ...restProps }) => (
 )
 
 const Usage = () => {
-  const [clapState, updateClapState] = useClapState()
+  const { 
+    clapState, 
+    updateClapState, 
+    togglerProps, 
+    counterProps 
+  } = useClapState()
   const { count, countTotal, isClicked } = clapState
 
   const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
@@ -224,15 +237,16 @@ const Usage = () => {
 
   return (
     <ClapContainer 
-      handleClick={updateClapState}
       setRef={setRef}    
       data-refkey="clapRef"
+      {...togglerProps}
     >
       <ClapIcon isClicked={isClicked} />
       <ClapCount 
-        count={count}
         setRef={setRef}
-        data-refkey="clapCountRef" />
+        data-refkey="clapCountRef" 
+        {...counterProps}
+      />
       <CountTotal 
         countTotal={countTotal}
         setRef={setRef}
