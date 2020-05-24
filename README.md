@@ -50,6 +50,7 @@
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
     - [What are props getters](#what-are-props-getters)
     - [From collections to getters](#from-collections-to-getters)
+    - [Use cases for prop getters](#use-cases-for-prop-getters)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
@@ -2082,6 +2083,89 @@ const Usage = () => {
         data-refkey="clapCountTotalRef" />
     </ClapContainer>
   )
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Use cases for prop getters
+
+```javascript
+const Usage = () => {
+  const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps 
+  } = useClapState()
+  const { count, countTotal, isClicked } = clapState
+  const [{ clapRef, clapCountRef, clapCountTotalRef }, setRef] = useDOMRef()
+  const animationTimeline = useClapAnimation({ ... })
+  useEffectAfterMount(() => { ... }, [count])
+
+  // use case 1: user can change 'aria-pressed' value in props
+  // use case 2: user can pass in onClick handler
+  return (
+    <ClapContainer 
+      setRef={setRef}    
+      data-refkey="clapRef"
+      {...getTogglerProps({
+        'aria-pressed': false,
+        onClick: handleClick
+      })}
+    >
+      <ClapIcon isClicked={isClicked} />
+      <ClapCount 
+        setRef={setRef}
+        data-refkey="clapCountRef" 
+        {...getCounterProps()}
+      />
+      <CountTotal 
+        countTotal={countTotal}
+        setRef={setRef}
+        data-refkey="clapCountTotalRef" />
+    </ClapContainer>
+  )
+}
+```
+
+```javascript
+// reference to:
+// const handleClick = event => { ... }
+// <button onClick={handleClick} />
+
+// callFnsInSequence take in many functions (...fns)
+// and return a function 
+// (...args) => { fns.forEach(fn => fn && fn(...args)) }
+// all arguements (...args) of functions e.g. event
+const callFnsInSquence = (...fns) => (...args) => {
+  fns.forEach(fn => fn && fn(...args))
+}
+
+const useClapState = (initialState = INITIAL_STATE) => {
+  const MAXIMUM_USER_CLAP = 50
+  const [clapState, setClapState] = useState(initialState)
+  const { count, countTotal } = clapState
+
+  const updateClapState = useCallback(() => {
+    setClapState(({ count, countTotal }) => ({ ... }))
+  },[count, countTotal])
+
+  const getTogglerProps = ({ onClick, ...otherProps }) => ({
+    onClick: callFnsInSquence(updateClapState, onClick),
+    'aria-pressed': clapState.isClicked,
+    ...otherProps
+  })
+
+  const getCounterProps = ({ ...otherProps }) => ({
+    count,
+    'aria-valuemax': MAXIMUM_USER_CLAP,
+    'aria-valuemin': 0,
+    'aria-valuenow': count,
+    ...otherProps
+  })
+
+  return { clapState, updateClapState, getTogglerProps, getCounterProps }
 }
 ```
 
