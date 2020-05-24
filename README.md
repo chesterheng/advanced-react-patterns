@@ -1880,6 +1880,7 @@ const useEffectAfterMount = (cb, deps) => {
   }, deps)
 }
 ```
+
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 8: The Props Collection Pattern**
