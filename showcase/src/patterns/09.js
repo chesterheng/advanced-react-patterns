@@ -132,12 +132,13 @@ const useDOMRef = () => {
   return [DOMRef, setRef]
 }
 
+// use effect is never called until the return statement of the functional component is reached.
 const usePrevious = value => {
   const ref = useRef()
   useEffect(() => {
-    ref.current = value
+    ref.current = value // 2. then run use effect 
   }, [value])
-  return ref.current
+  return ref.current  // 1. return 1st
 }
 
 // reference to:

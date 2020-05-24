@@ -56,6 +56,7 @@
     - [First pattern requirement](#first-pattern-requirement)
     - [Handling resets](#handling-resets)
     - [Handling reset side effects](#handling-reset-side-effects)
+    - [How usePrevious works](#how-useprevious-works)
   - [**Section 11: The State Reducer Pattern**](#section-11-the-state-reducer-pattern)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
@@ -2300,14 +2301,6 @@ const Usage = () => {
 ### Handling reset side effects
 
 ```javascript
-const usePrevious = value => {
-  const ref = useRef()
-  useEffect(() => {
-    ref.current = value
-  }, [value])
-  return ref.current
-}
-
 const useClapState = (initialState = INITIAL_STATE) => {
   const MAXIMUM_USER_CLAP = 5
   const userInitialState = useRef(initialState)
@@ -2408,6 +2401,28 @@ const Usage = () => {
     </div>
     
   )
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### How usePrevious works
+[How to get previous props/state with React Hooks](https://blog.logrocket.com/how-to-get-previous-props-state-with-react-hooks/)
+
+```javascript
+// use effect is never called until the return statement of the functional component is reached.
+
+// 1st run: value = 0, ref.current = undefined, return undefined, update ref.current = 0
+// 2nd run: value = 1, ref.current = 0, return 0, update ref.current = 1
+// 3rd run: value = 2, ref.current = 1, return 1, update ref.current = 2
+// ...
+const usePrevious = value => {
+  const ref = useRef()
+
+  useEffect(() => {
+    ref.current = value // 2. then run use effect
+  }, [value])
+  return ref.current  // 1. return 1st
 }
 ```
 
