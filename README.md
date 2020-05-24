@@ -39,6 +39,7 @@
     - [Implementing the pattern](#implementing-the-pattern)
     - [Practical usage of control props](#practical-usage-of-control-props)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
+    - [Introduction](#introduction)
   - [**Section 8: The Props Collection Pattern**](#section-8-the-props-collection-pattern)
   - [**Section 9: The Props Getters Pattern**](#section-9-the-props-getters-pattern)
   - [**Section 10: The State Initialiser Pattern**](#section-10-the-state-initialiser-pattern)
@@ -1801,6 +1802,15 @@ export default Usage
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**
+
+### Introduction
+
+```<MediumClap />``` -> Logic + UI components
+```<MediumClap />``` -> L + O + G + I + C + UI components
+- useClapAnimation
+- useDOMRef
+- UseEffectAfterMount
+- useClapState
 
 **[⬆ back to top](#table-of-contents)**
 
