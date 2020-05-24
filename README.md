@@ -17,6 +17,8 @@
     - [Animating the clap count](#animating-the-clap-count)
     - [Creating animated bursts!](#creating-animated-bursts)
   - [**Section 3: Custom Hooks: The first Foundational Pattern**](#section-3-custom-hooks-the-first-foundational-pattern)
+    - [New to hooks?](#new-to-hooks)
+    - [Introduction to Custom Hooks](#introduction-to-custom-hooks)
     - [Building an animation custom hook](#building-an-animation-custom-hook)
     - [Custom hooks and refs](#custom-hooks-and-refs)
     - [When is my hook invoked?](#when-is-my-hook-invoked)
@@ -570,6 +572,33 @@ const withClapAnimation = WrappedComponent => {
 **[⬆ back to top](#table-of-contents)**
 
 ## **Section 3: Custom Hooks: The first Foundational Pattern**
+
+### New to hooks?
+
+- [Hooks API Reference](https://reactjs.org/docs/hooks-reference.html)
+
+Basic Hooks
+- [Using the State Hook](https://reactjs.org/docs/hooks-state.html)
+- [Using the Effect Hook](https://reactjs.org/docs/hooks-effect.html)
+- [useContext](https://reactjs.org/docs/hooks-reference.html#usecontext)
+
+Additional Hooks
+- [useCallback](https://reactjs.org/docs/hooks-reference.html#usecallback)
+- [useMemo](https://reactjs.org/docs/hooks-reference.html#usememo)
+- [useRef](https://reactjs.org/docs/hooks-reference.html#useref)
+- [useLayoutEffect](https://reactjs.org/docs/hooks-reference.html#uselayouteffect)
+
+How do lifecycle methods correspond to Hooks?
+- constructor: Function components don’t need a constructor. You can initialize the state in the useState call. If computing the initial state is expensive, you can pass a function to useState.
+- getDerivedStateFromProps: Schedule an update while rendering instead.
+- shouldComponentUpdate: See React.memo below.
+- render: This is the function component body itself.
+- componentDidMount, componentDidUpdate, componentWillUnmount: The useEffect Hook can express all combinations of these (including less common cases).
+- getSnapshotBeforeUpdate, componentDidCatch and getDerivedStateFromError: There are no Hook equivalents for these methods yet, but they will be added soon.
+
+**[⬆ back to top](#table-of-contents)**
+
+### [Introduction to Custom Hooks](https://reactjs.org/docs/hooks-custom.html)
 
 Custom Hooks are a mechanism to reuse stateful logic
 
