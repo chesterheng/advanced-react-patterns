@@ -4,7 +4,8 @@ import React, {
   useCallback,
   createContext,
   useMemo,
-  useContext
+  useContext,
+  useEffect
 } from 'react'
 import mojs from 'mo-js'
 import styles from './index.css'
@@ -129,7 +130,7 @@ const { Provider } = MediumClapContext
 
 // 5. MediumClap component don’t know their children ahead of time. 
 // Use the special children prop to pass children elements directly into MediumClap
-const MediumClap = ({ children }) => {
+const MediumClap = ({ children, onClap }) => {
   const MAXIMUM_USER_CLAP = 50
   const [clapState, setClapState] = useState(initialState)
   const { count, countTotal, isClicked } = clapState
@@ -147,6 +148,10 @@ const MediumClap = ({ children }) => {
     clapCountEl: clapCountRef, 
     clapCountTotalEl: clapCountTotalRef
   })
+
+  useEffect(() => {
+    onClap && onClap(clapState)
+  }, [count])
 
   const handleClapClick = () => {
     animationTimeline.replay()
@@ -239,12 +244,20 @@ MediumClap.Total = ClapCountTotal
 // 5. MediumClap component don’t know their children ahead of time. 
 // Use the special children prop to pass children elements directly into MediumClap
 const Usage = () => {
+  // expose count, countTotal and isClicked
+  const [count, setCount] = useState(0)
+  const handleClap = (clapState) => {
+    setCount(clapState.count)
+  }
   return (
-    <MediumClap>
-      <MediumClap.Icon />
-      <MediumClap.Count />
-      <MediumClap.Total />
-    </MediumClap>
+    <div style={{ width: '100%' }}>
+      <MediumClap onClap={handleClap}>
+        <MediumClap.Icon />
+        <MediumClap.Count />
+        <MediumClap.Total />
+      </MediumClap>
+      <div className={styles.info}>{`You have clapped ${count}`}</div>
+    </div>
   )
 }
 

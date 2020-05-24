@@ -25,6 +25,7 @@
     - [How to implement the pattern](#how-to-implement-the-pattern)
     - [Refactor to Compound components](#refactor-to-compound-components)
     - [Alternative export strategy](#alternative-export-strategy)
+    - [Exposing state via a callback](#exposing-state-via-a-callback)
   - [**Section 5: Patterns for Crafting Reusable Styles**](#section-5-patterns-for-crafting-reusable-styles)
   - [**Section 6: The Control Props Pattern**](#section-6-the-control-props-pattern)
   - [**Section 7: Custom Hooks: A Deeper Look at the Foundational Pattern**](#section-7-custom-hooks-a-deeper-look-at-the-foundational-pattern)
@@ -1199,6 +1200,54 @@ const Usage = () => {
 
 **[⬆ back to top](#table-of-contents)**
 
+### Exposing state via a callback
+
+```javascript
+const initialState = {
+  count: 0,
+  countTotal: 267,
+  isClicked: false
+}
+
+const MediumClap = ({ children, onClap }) => { 
+  const [clapState, setClapState] = useState(initialState)
+
+  useEffect(() => {
+    onClap && onClap(clapState)
+  }, [count])
+
+}
+MediumClap.Icon = ClapIcon
+MediumClap.Count = ClapCount
+MediumClap.Total = ClapCountTotal
+
+export default MediumClap
+```
+
+```javascript
+import MediumClap, { Icon, Count, Total } from 'medium-clap'
+
+const Usage = () => {
+  // expose count, countTotal and isClicked
+  const [count, setCount] = useState(0)
+  const handleClap = (clapState) => {
+    setCount(clapState.count)
+  }
+  return (
+    <div>
+      <MediumClap onClap={handleClap}>
+        <MediumClap.Icon />
+        <MediumClap.Count />
+        <MediumClap.Total />
+      </MediumClap>
+      <div className={styles.info}>{`You have clapped ${count}`}</div>
+    </div>
+  )
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
+
 ## **Section 5: Patterns for Crafting Reusable Styles**
 
 **[⬆ back to top](#table-of-contents)**
@@ -1230,7 +1279,3 @@ const Usage = () => {
 ## **Section 12: (Bonus) Classifying the Patterns: How to choose the best API**
 
 **[⬆ back to top](#table-of-contents)**
-
-```
-
-```
