@@ -189,7 +189,8 @@ const useClapState = (
   const resetRef = useRef(0) // 0, 1, 2, 3, ...
   const prevCount = usePrevious(count)
   const reset = useCallback(() => {
-    if(prevCount < count || prevCount === MAXIMUM_USER_CLAP) {
+    if(prevCount < count  
+      || (prevCount === count && prevCount!== 0)) {
       dispatch({ type: 'reset', payload: userInitialState.current })
       resetRef.current++
     }
@@ -218,6 +219,9 @@ const useClapState = (
     resetDep: resetRef.current
   }
 }
+
+useClapState.reducer = internalReducer
+useClapState.types = { clap: 'clap', reset: 'reset'}
 
 const useEffectAfterMount = (cb, deps) => {
   const componentJustMounted = useRef(true)
@@ -282,19 +286,14 @@ const userInitialState = {
 }
 
 const Usage = () => {
-  const reducer = ({ count, countTotal }, { type, payload }) => {
-    switch (type) {
-      case 'clap':
-        return { 
-          count: Math.min(count + 1, 10),
-          countTotal: count < 10 ? countTotal + 1 : countTotal,
-          isClicked: true
-        }
-      case 'reset':
-          return payload
-      default:
-        break;
+  const [timesClapped, setTimesClapped] = useState(0)
+  const isClappedTooMuch = timesClapped >= 7
+
+  const reducer = (state, action) => {
+    if(action.type === useClapState.types.clap && isClappedTooMuch) {
+      return state
     }
+    return useClapState.reducer(state, action)
   }
   const { 
     clapState, 
@@ -321,6 +320,7 @@ const Usage = () => {
   const [uploadingReset, setUpload] = useState(false)
   useEffectAfterMount(() => {
     setUpload(true)
+    setTimesClapped(0)
 
     const id = setTimeout(() => {
       setUpload(false)
@@ -329,7 +329,7 @@ const Usage = () => {
     return () => clearTimeout(id)
   }, [resetDep])
 
-  const handleClick = () => console.log("CLICKED!!!")
+  const handleClick = () => setTimesClapped(t => t + 1)
 
   // use case 1: user can change 'aria-pressed' value in props
   // use case 2: user can pass in onClick handler
@@ -364,11 +364,16 @@ const Usage = () => {
           reset
         </button>
         <pre className={userStyles.resetMsg}>
-          {JSON.stringify({count, countTotal, isClicked})}
+          {JSON.stringify({timesClapped, count, countTotal})}
         </pre>
         <pre className={userStyles.resetMsg}>
           { uploadingReset ? `uploading reset ${resetDep} ...` : '' }
         </pre>
+        <pre style={{ color: 'red' }}>
+            {isClappedTooMuch 
+              ? `You have clapped too much. Don't be so generous!`
+              : ''}
+          </pre>
       </section>
     </div>
     

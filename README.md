@@ -61,6 +61,7 @@
     - [The state reducer pattern](#the-state-reducer-pattern)
     - [From useState to useReducer](#from-usestate-to-usereducer)
     - [Passing a user custom reducer](#passing-a-user-custom-reducer)
+    - [Exposing the internal reducer and types](#exposing-the-internal-reducer-and-types)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
 
 ## **Section 1: Introduction**
@@ -2575,6 +2576,71 @@ export default Usage
 ```
 
 **[⬆ back to top](#table-of-contents)**
+
+### Exposing the internal reducer and types
+
+```javascript
+const useClapState = (
+  initialState = INITIAL_STATE, 
+  reducer = internalReducer
+) => {
+  const userInitialState = useRef(initialState)
+  const [clapState, dispatch] = useReducer(reducer, initialState)
+  const { count, countTotal } = clapState
+  
+  const updateClapState = () => dispatch({ type: 'clap' })
+
+  const resetRef = useRef(0) // 0, 1, 2, 3, ...
+  const prevCount = usePrevious(count)
+  const reset = useCallback(() => {
+    if(prevCount < count  
+      || (prevCount === count && prevCount!== 0)) {
+      dispatch({ type: 'reset', payload: userInitialState.current })
+      resetRef.current++
+    }
+  }, [prevCount, count, dispatch])
+
+  const getTogglerProps = ({ onClick, ...otherProps }) => ({ ... })
+  const getCounterProps = ({ ...otherProps }) => ({ ... })
+
+  return { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps, 
+    reset, 
+    resetDep: resetRef.current
+  }
+}
+
+// expose the internal reducer and types
+useClapState.reducer = internalReducer
+useClapState.types = { clap: 'clap', reset: 'reset'}
+```
+
+```javascript
+const Usage = () => {
+  const [timesClapped, setTimesClapped] = useState(0)
+  const isClappedTooMuch = timesClapped >= 7
+
+  // user can modify existing internal reducer
+  const reducer = (state, action) => {
+    if(action.type === useClapState.types.clap && isClappedTooMuch) {
+      return state
+    }
+    return useClapState.reducer(state, action)
+  }
+    const { 
+    clapState, 
+    updateClapState, 
+    getTogglerProps, 
+    getCounterProps,
+    reset,
+    resetDep
+  } = useClapState(userInitialState, reducer)
+  ...
+}
+```
 
 ## **Section 12: (Bonus) Classifying the Patterns: How to choose the best API**
 
