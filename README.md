@@ -63,6 +63,8 @@
     - [Passing a user custom reducer](#passing-a-user-custom-reducer)
     - [Exposing the internal reducer and types](#exposing-the-internal-reducer-and-types)
   - [**Section 12: (Bonus) Classifying the Patterns: How to choose the best API**](#section-12-bonus-classifying-the-patterns-how-to-choose-the-best-api)
+    - [How the classification works](#how-the-classification-works)
+    - [Making the right API choice](#making-the-right-api-choice)
 
 ## **Section 1: Introduction**
 
@@ -602,7 +604,6 @@ const withClapAnimation = WrappedComponent => {
 ### New to hooks?
 
 - [Hooks API Reference](https://reactjs.org/docs/hooks-reference.html)
-- [useHooks](https://usehooks.com/)
 
 Basic Hooks
 - [Using the State Hook](https://reactjs.org/docs/hooks-state.html)
@@ -642,6 +643,8 @@ useAdvancedPatterns()
 Open-source examples
 
 - [react-use](https://github.com/streamich/react-use)
+- [useHooks](https://usehooks.com/)
+- [beautiful React hooks](https://github.com/beautifulinteractions/beautiful-react-hooks)
 - [React Table](https://github.com/tannerlinsley/react-table)
 
 | Pros                          | Cons              |
@@ -2643,5 +2646,21 @@ const Usage = () => {
 ```
 
 ## **Section 12: (Bonus) Classifying the Patterns: How to choose the best API**
+
+### How the classification works
+
+- User Interface <-> Logic (x-axis)
+- Difficulty (y-axis)
+
+**[⬆ back to top](#table-of-contents)**
+
+### Making the right API choice
+
+| Difficulty    | User Interface      | User Interface and Logic   | Logic        |
+| :----------- | :------------------ | :------------------------- | :----------- |
+| Easy         | Reusable Styles     | Props Collection & Getters |              |
+| Intermediate | Compound Components | State Initialisers         | Custom Hooks |
+| Hard         |                     | Control Props              |              |
+| Hard         |                     | State Reducer              |              |
 
 **[⬆ back to top](#table-of-contents)**
