@@ -1094,6 +1094,25 @@ ajv@^6.1.0, ajv@^6.10.2:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+annois@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/annois/-/annois-0.2.0.tgz#4d76b61a2c6f8a39d1269617e93b33a8c16532ce"
+  integrity sha1-TXa2GixvijnRJpYX6TszqMFlMs4=
+
+annotate@0.6.7:
+  version "0.6.7"
+  resolved "https://registry.yarnpkg.com/annotate/-/annotate-0.6.7.tgz#0f9eedefb38dec706ad4226081f9f4772860b575"
+  integrity sha1-D57t77ON7HBq1CJggfn0dyhgtXU=
+  dependencies:
+    is-js "== 0.1.1"
+
+"annotate@== 0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/annotate/-/annotate-0.6.2.tgz#11665f6fe2a9ec2a49f0a2a9baa8efc8d5c0a2cc"
+  integrity sha1-EWZfb+Kp7CpJ8KKpuqjvyNXAosw=
+  dependencies:
+    is-js "== 0.1.1"
+
 ansi-colors@^3.0.0:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-3.2.4.tgz#e3a3da4bfbae6c86a9c285625de124a234026fbf"
@@ -1234,9 +1253,9 @@ async-limiter@~1.0.0:
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
 
 async@^2.6.2:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.6.3.tgz#d72625e2344a3656e3a3ad4fa749fa83299d82ff"
-  integrity sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.4.tgz#706b7ff6084664cd7eae713f6f965433b5504221"
+  integrity sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==
   dependencies:
     lodash "^4.17.14"
 
@@ -1783,6 +1802,11 @@ commander@2.17.x:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
   integrity sha512-wPMUt6FnH2yzG95SA6mzjQOEKUU3aLaDEmzs1ti+1E9h+CsrZghRlqEM/EJ4KscsQVG8uNN4uVreUeT8+drlgg==
+
+"commander@>= 0.5.2":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-9.2.0.tgz#6e21014b2ed90d8b7c9647230d8b7a94a4a419a9"
+  integrity sha512-e2i4wANQiSXgnrBlIatyHtP1odfUp0BbV5Y5nEGbxtIrStkEOAAzCUirvLBNXHLr7kwLvJl6V+4V3XV9x7Wd9w==
 
 commander@^2.12.2, commander@^2.20.0, commander@^2.8.1:
   version "2.20.3"
@@ -2976,6 +3000,22 @@ function-bind@^1.1.1:
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
 
+funkit@0.7.7, "funkit@== 0.7.7":
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/funkit/-/funkit-0.7.7.tgz#22f4a2e77f7c3aa39446d7405ca8c1a8637cb733"
+  integrity sha1-IvSi5398OqOURtdAXKjBqGN8tzM=
+  dependencies:
+    annotate "== 0.6.2"
+    is-js "== 0.1.1"
+
+"funkit@== 0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/funkit/-/funkit-0.3.2.tgz#c25cb3cb03fa0c15ea2e54343c2c40b314607a7c"
+  integrity sha1-wlyzywP6DBXqLlQ0PCxAsxRgenw=
+  dependencies:
+    generators.js ">= 0.1.9"
+    suite.js ">= 0.1.1"
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
@@ -2989,6 +3029,16 @@ gauge@~2.7.3:
     string-width "^1.0.1"
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
+
+"generators.js@>= 0.1.9":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/generators.js/-/generators.js-0.5.0.tgz#abc51247f174eb9e1da9502c1f7866aae6aeef84"
+  integrity sha1-q8USR/F0654dqVAsH3hmquau74Q=
+  dependencies:
+    annois "0.2.0"
+    annotate "0.6.7"
+    funkit "0.7.7"
+    require-dir "0.1.0"
 
 get-caller-file@^1.0.1:
   version "1.0.3"
@@ -3502,6 +3552,14 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
+"ioscript.js@== 0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ioscript.js/-/ioscript.js-0.2.0.tgz#e63dda77b6925767034c1d967f727201262b9165"
+  integrity sha1-5j3ad7aSV2cDTB2Wf3JyASYrkWU=
+  dependencies:
+    commander ">= 0.5.2"
+    funkit "== 0.3.2"
+
 ip-regex@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-2.1.0.tgz#fa78bf5d2e6913c911ce9f819ee5146bb6d844e9"
@@ -3652,6 +3710,11 @@ is-glob@^4.0.0:
   integrity sha512-5G0tKtBTFImOqDnLB2hG6Bp2qcKEFduo4tZu9MT/H6NQv/ghhy30o55ufafxJ/LdH79LLs2Kfrn85TLKyA7BUg==
   dependencies:
     is-extglob "^2.1.1"
+
+"is-js@== 0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/is-js/-/is-js-0.1.1.tgz#dfe498e487cd715bf6ce3ccdabf3c01eec37dc2c"
+  integrity sha1-3+SY5IfNcVv2zjzNq/PAHuw33Cw=
 
 is-natural-number@^4.0.1:
   version "4.0.1"
@@ -3931,9 +3994,9 @@ locate-path@^3.0.0:
     path-exists "^3.0.0"
 
 lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.3:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
+  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 log-symbols@^2.1.0:
   version "2.2.0"
@@ -4255,6 +4318,14 @@ mo-js@^0.288.2:
   integrity sha1-ZiyAPRihEM9+Qi1WnvzeoEiAWS4=
   dependencies:
     babel-runtime "^6.5.0"
+
+mojs@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/mojs/-/mojs-0.2.0.tgz#7a95d0804e6431738f61d7b45cd99be8fcb2256b"
+  integrity sha1-epXQgE5kMXOPYde0XNmb6PyyJWs=
+  dependencies:
+    ioscript.js "== 0.2.0"
+    suite.js ">= 0.1.1"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -5285,6 +5356,11 @@ repeat-string@^1.6.1:
   resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
   integrity sha1-jcrkcOHIirwtYA//Sndihtp15jc=
 
+require-dir@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/require-dir/-/require-dir-0.1.0.tgz#81e01e299faf5b74c34b6594f8e5add5985ddec5"
+  integrity sha1-geAeKZ+vW3TDS2WU+OWt1Zhd3sU=
+
 require-directory@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
@@ -5908,6 +5984,14 @@ stylis@^3.5.0:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.5.4.tgz#f665f25f5e299cf3d64654ab949a57c768b73fbe"
   integrity sha512-8/3pSmthWM7lsPBKv7NXkzn2Uc9W7NotcwGNpJaa3k7WMM1XDCA4MgT5k/8BIexd5ydZdboXtU90XH9Ec4Bv/Q==
+
+"suite.js@>= 0.1.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/suite.js/-/suite.js-0.6.1.tgz#8dc58225924dbe03e2add317577cfb78ef82b464"
+  integrity sha1-jcWCJZJNvgPirdMXV3z7eO+CtGQ=
+  dependencies:
+    funkit "== 0.7.7"
+    is-js "== 0.1.1"
 
 supports-color@6.1.0, supports-color@^6.1.0:
   version "6.1.0"
